@@ -3,7 +3,7 @@ import torch
 from darea.datasets.musan import Musan_Dataset
 
 def test_musan_download():
-    Musan_Dataset(download=True).download()
+    Musan_Dataset(download=False).download()
     assert True
 
 def test_musan_dataset_wrong_samplerate():

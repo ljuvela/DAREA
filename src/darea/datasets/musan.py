@@ -56,6 +56,7 @@ class Musan_Dataset(AudioDataset):
         return super().__getitem__(index)
 
     def check_files(self):
+
         data_path = Musan_Dataset.data_path
         audio_path = os.path.join(data_path, "musan", "noise", "free-sound")
 

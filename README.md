@@ -6,10 +6,46 @@ Differentiable augmentation and robustness evaluation for audio
 
 Noise and room impulse response samples are stored in `DAREA_DATA_PATH`. The user should set this environment variable to the path where the data is stored. For example, in bash:
 ```shell
-export DAREA_DATA_PATH='./data'
+export DAREA_DATA_PATH="<path-to-your-data-directory>"
 ```
 
-If the data is missing, it will be downloaded automatically.
+### Musan dataset
+Musan noise samples should be located at 
+```bash
+$DAREA_DATA_PATH/musan/musan/noise/free-sound
+```
+
+You can download the dataset by using the following python snippet
+```python
+from darea.datasets.musan import Musan_Dataset
+Musan_Dataset(download=True).download()
+```
+
+Check that everything is working correctly by running related tests with pytest
+```bash
+pytest tests/test_musan_dataset.py
+```
+
+
+### MIT room impulse response dataset
+
+
+The room impulse response samples should be located at 
+```bash
+$DAREA_DATA_PATH/mit_rir/Audio
+```
+
+You can download the dataset by using the following python snippet
+```python
+from darea.room_impulse import MIT_RIR_Dataset
+MIT_RIR_Dataset(download=True).download()
+```
+
+Check that everything is working correctly by running related tests with pytest
+```bash
+pytest tests/test_mit_rir_dataset.py
+```
+
 
 ## Dependencies
 

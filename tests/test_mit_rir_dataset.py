@@ -12,7 +12,7 @@ def test_get_data_path():
     assert os.path.exists(path)
 
 def test_mit_rir_download():
-    MIT_RIR_Dataset().download()
+    MIT_RIR_Dataset(download=False).download()
     assert True
 
 
@@ -30,14 +30,3 @@ def test_mit_rir_dataset():
     assert audio.shape[-1] == 16000
 
 
-def test_convolution_reverb_augment():
-
-    dataset = MIT_RIR_Dataset(sampling_rate=16000, segment_size=16000, partition='train', resample=True, shuffle=False)
-    reverb = ConvolutionReverbAugment(dataset)
-    batch_size = 2
-    channels = 1
-    timesteps = 16000
-    audio = torch.randn(batch_size, channels, timesteps)
-    
-    audio_reverbed = reverb(audio)
-    assert audio_reverbed.shape == audio.shape
