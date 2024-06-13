@@ -55,6 +55,14 @@ pytest tests/test_mit_rir_dataset.py
 
 ### STE estimator for conventional codecs
 
+This repository uses torch audio wrappers for ffmpeg codecs. In torchaudio 2.3.0, supported ffmpeg major versions are 4, 5, 6
+
+Current ffmpeg version is 7. To install ffmpeg version 6, run the following command
+```bash
+mamba install -c pytorch -c conda-forge 'ffmpeg<7'
+```
+
+
 ### Torchaudio
 
 # Installation
