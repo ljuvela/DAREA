@@ -1,7 +1,7 @@
 import torch
 from importlib.resources import files
 
-from .utils import get_data_path
+
 
 import wget
 import zipfile
@@ -9,6 +9,7 @@ import os
 
 import torchaudio
 
+from .utils import get_data_path
 from .audiodataset import AudioDataset
 
 class ConvolutionReverbAugment(torch.nn.Module):
@@ -48,12 +49,12 @@ class ConvolutionReverbAugment(torch.nn.Module):
         rir = rir[..., int(start):int(stop)]
 
         rir = rir.to(device)
-        # pad
-        rir = torch.nn.functional.pad(rir, pad=(waveform.size(-1)-rir.size(-1), 0), mode='constant', value=0.0)
+        # pad from the right
+        rir = torch.nn.functional.pad(rir, pad=(0, waveform.size(-1)-rir.size(-1)), mode='constant', value=0.0)
         # normalize
         rir = rir / (rir.norm(2) + 1e-6)
     
-        y = torchaudio.functional.fftconvolve(waveform, rir)
+        y = torchaudio.functional.fftconvolve(waveform, rir, mode='full')
         return y[..., :timesteps]
 
 class MIT_RIR_Dataset(AudioDataset):
