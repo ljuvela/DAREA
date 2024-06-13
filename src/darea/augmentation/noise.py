@@ -1,7 +1,7 @@
 import torch
 import torchaudio
 
-from .audiodataset import AudioDataset, get_dataset_filelist
+from ..audiodataset import AudioDataset, get_dataset_filelist
 
 class WhiteNoiseDataset(torch.utils.data.Dataset):
 

@@ -1,8 +1,8 @@
 import pytest
 import torch
 
-from darea.room_impulse import MIT_RIR_Dataset
-from darea.room_impulse import ConvolutionReverbAugment
+from darea.datasets.mit_rir import MIT_RIR_Dataset
+from darea.augmentation.room_impulse import ConvolutionReverbAugment
 
 
 def test_convolution_reverb_augment():

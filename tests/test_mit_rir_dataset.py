@@ -4,8 +4,8 @@ import torch
 
 from darea.utils import get_data_path
 
-from darea.room_impulse import MIT_RIR_Dataset
-from darea.room_impulse import ConvolutionReverbAugment
+from darea.datasets.mit_rir import MIT_RIR_Dataset
+from darea.augmentation.room_impulse import ConvolutionReverbAugment
 
 def test_get_data_path():
     path = get_data_path()

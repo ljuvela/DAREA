@@ -1,8 +1,6 @@
 import torch
 
-import os
-
-from darea.noise_augmentation import NoiseAugmentation
+from darea.augmentation.noise import NoiseAugmentation
 from darea.datasets.musan import Musan_Dataset
 
 def test_noise_augmentation():

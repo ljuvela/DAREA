@@ -1,16 +1,14 @@
 import torch
 from importlib.resources import files
 
-
-
 import wget
 import zipfile
 import os
 
 import torchaudio
 
-from .utils import get_data_path
-from .audiodataset import AudioDataset
+from ..utils import get_data_path
+from ..audiodataset import AudioDataset
 
 class ConvolutionReverbAugment(torch.nn.Module):
 
