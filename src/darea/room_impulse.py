@@ -7,8 +7,54 @@ import wget
 import zipfile
 import os
 
+import torchaudio
+
 from .audiodataset import AudioDataset
 
+class ConvolutionReverbAugment(torch.nn.Module):
+
+    def __init__(self, dataset, num_workers=0):
+        super().__init__()
+
+        self.dataset = dataset
+        self.dataloader = torch.utils.data.DataLoader(
+            dataset, batch_size=1,
+            num_workers=num_workers, drop_last=True, 
+            )
+
+    def _rir_generator(self):
+        while True:
+            for x, _ in iter(self.dataloader):
+                yield x
+
+    def forward(self, waveform):
+        """
+        Args:
+            waveform, shape = (batch, channels=1, time)
+
+        Returns:
+            noisy_waveform, shape (batch, channels=1, time) 
+        """
+
+        batch_size, channels, timesteps = waveform.size()
+
+        device = waveform.device
+        rir = next(self._rir_generator())
+
+        # align to maximum peak
+        offset = 20
+        start = torch.maximum(torch.argmax(rir.abs()) - offset, torch.zeros(1))
+        stop = torch.minimum(torch.Tensor([rir.size(-1)]), start+timesteps)
+        rir = rir[..., int(start):int(stop)]
+
+        rir = rir.to(device)
+        # pad
+        rir = torch.nn.functional.pad(rir, pad=(waveform.size(-1)-rir.size(-1), 0), mode='constant', value=0.0)
+        # normalize
+        rir = rir / (rir.norm(2) + 1e-6)
+    
+        y = torchaudio.functional.fftconvolve(waveform, rir)
+        return y[..., :timesteps]
 
 class MIT_RIR_Dataset(AudioDataset):
 
@@ -21,8 +67,9 @@ class MIT_RIR_Dataset(AudioDataset):
     }
     data_path = os.path.join(get_data_path(), "mit_rir")
 
-    def __init__(self, sampling_rate=16000, segment_size=None, split=True, shuffle=True, n_cache_reuse=1, resample=False, device=None,
-                 partition='train'):
+    def __init__(self, sampling_rate=16000, segment_size=None, split=True,
+                 shuffle=True, n_cache_reuse=1, resample=False, device=None,
+                 partition='train', download=False):
 
         if partition == 'train':
             filelist = MIT_RIR_Dataset.filelists['train']
@@ -36,39 +83,55 @@ class MIT_RIR_Dataset(AudioDataset):
 
         files_text = filelist.read_text()
         files = files_text.split('\n')
+        files_full_path = [os.path.join(
+            MIT_RIR_Dataset.data_path, "Audio", f) for f in files]
 
-        super().__init__(files, sampling_rate, segment_size,
+        super().__init__(files_full_path, sampling_rate, segment_size,
                          split, shuffle, n_cache_reuse, resample, device)
+
+        files_found = self.check_files()
+        if not files_found:
+            if download:
+                self.download()
+            else:
+                raise FileNotFoundError(
+                    f"Data not found at {MIT_RIR_Dataset.data_path}!"
+                    f"Please set the download flag to True to download it from {MIT_RIR_Dataset.url}")
 
     def __getitem__(self, index):
         return super().__getitem__(index)
 
-    def download(self, data_dir=None):
-        if data_dir is None:
-            data_dir = get_data_path()
-
+    def check_files(self):
         data_path = MIT_RIR_Dataset.data_path
+        audio_path = os.path.join(data_path, "Audio")
 
         # check if audio files are already present
+        if not os.path.exists(audio_path):
+            return False
+
+        # check for each file in partition
+        missing_files = False
+        for filepath in self.audio_files:
+            if not os.path.exists(filepath):
+                missing_files = True
+                break
+
+        return not missing_files
+
+    def download(self):
+
+        data_path = MIT_RIR_Dataset.data_path
         audio_path = os.path.join(data_path, "Audio")
-        if os.path.exists(audio_path):
-            # check for each file in partition
-            missing_files = False
-            for file in self.audio_files:
-                filepath = os.path.join(audio_path, file)
-                if not os.path.exists(filepath):
-                    print(
-                        f"Data not found at {audio_path}! Will download it from {MIT_RIR_Dataset.url}")
-                    missing_files = True
-                    break
 
-            if not missing_files:
-                print(f"Data already present at {audio_path}")
-                return
+        # check if the files already exist
+        files_found = self.check_files()
+        if files_found:
+            print(f"Data already present at {audio_path}")
+            return
 
+        # Download the data zip archive
         os.makedirs(data_path, exist_ok=True)
         zip_file = os.path.join(data_path, "Audio.zip")
-
         if os.path.exists(zip_file):
             print(f"Data zip file already present at {zip_file}")
         else:
@@ -76,6 +139,7 @@ class MIT_RIR_Dataset(AudioDataset):
                 f"Data not found at {zip_file}! Will download it from {MIT_RIR_Dataset.url}")
             wget.download(url=MIT_RIR_Dataset.url, out=zip_file)
 
+        # Extract the zip archive
         with zipfile.ZipFile(zip_file, 'r') as zip_ref:
             zip_ref.extractall(data_path)
 
