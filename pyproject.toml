@@ -10,6 +10,14 @@ authors = [
 ]
 
 
+[tool.setuptools]
+include-package-data = true
+
+
+[tool.setuptools.packages.find]
+namespaces = true
+where = ["src"]
+
 [build-system]
 # These are the assumed default build requirements from pip:
 # https://pip.pypa.io/en/stable/reference/pip/#pep-517-and-518-support
