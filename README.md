@@ -75,3 +75,18 @@ pip install -e .
 - Random 
 
 ## Augmentation types
+
+
+## Checklist
+
+- Energy normalise to -24dBFS
+- random phase shift
+- additive noise
+- pass filters
+- reverberation (recorded and simulated IRs)
+- low pass 4kH ; high pass 500Hz
+- noise at 20-35 dB SNR
+- sample dropout p=0.001
+- phase vocoder pitch shift +- 1 semitone
+- Speed change +- 5%
+- spectral gating relative to highest magnitude in frame (VoiceBlock, O Reilly et. al)
