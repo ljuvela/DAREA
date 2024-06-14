@@ -40,7 +40,28 @@ def test_codecs_gradient_pass(format):
     assert torch.allclose(x.grad, y.grad)
 
 
+def test_codecs_cuda():
 
+    if not torch.cuda.is_available():
+        return
 
+    device = torch.device('cuda')
 
-    pass
+    codec = CodecAugmentation(format='ogg').to(device)
+    codec.train()
+
+    batch = 2
+    channels = 1
+    samples = 16000
+    x = torch.randn(batch, channels, samples).to(device)
+    x = torch.nn.Parameter(x)
+
+    y = codec(x)
+    y.retain_grad()
+
+    loss = y.sum()
+    loss.backward()
+
+    assert x.grad is not None
+
+    assert torch.allclose(x.grad, y.grad)

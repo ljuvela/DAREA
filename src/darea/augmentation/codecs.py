@@ -48,9 +48,9 @@ class CodecAugmentation(torch.nn.Module):
         # TODO: GPU safe operation (move to cpu if implementation is not GPU safe)
         x_hat_list = []
         for x_i in x:
-            x_i = x_i.permute(1,0)
+            x_i = x_i.permute(1,0).to('cpu') # Codec inputs must be on CPU
             x_i_hat = self.codec.apply(x_i, sample_rate=self.sample_rate)
-            x_i_hat = x_i_hat.permute(1,0)
+            x_i_hat = x_i_hat.permute(1,0).to(input.device)
             x_hat_list.append(
                 x_i_hat
             )
