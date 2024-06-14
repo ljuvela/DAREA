@@ -21,14 +21,12 @@ class CodecAugmentation(torch.nn.Module):
             self.codec = AudioEffector(format='wav')
         elif format == "mp3":
             self.codec = AudioEffector(format='mp3')
-        elif format == "mp3-128":
-            self.codec = AudioEffector(format='mp3', codec_config=CodecConfig(bit_rate=32_000))
+        elif format == "mp3-32":
+            self.codec = AudioEffector(format='mp3', codec_config=CodecConfig(bit_rate=32000))
+        elif format == "mp3-8":
+            self.codec = AudioEffector(format='mp3', codec_config=CodecConfig(bit_rate=8000))
         elif format == "ogg":
             self.codec = AudioEffector(format='ogg')
-        elif format == "ogg-vorbis":
-            self.codec = AudioEffector(format='ogg', encoder='vorbis')
-        elif format == "ogg-opus":
-            self.codec = AudioEffector(format='ogg', encoder='opus')
         else:
             raise ValueError(f"Format '{format}' not supported")
 
@@ -47,6 +45,7 @@ class CodecAugmentation(torch.nn.Module):
         if x.size(1) != 1:
             raise ValueError(f"Expected mono audio, got {x.size(1)} channels")
 
+        # TODO: GPU safe operation (move to cpu if implementation is not GPU safe)
         x_hat_list = []
         for x_i in x:
             x_i = x_i.permute(1,0)
@@ -55,7 +54,7 @@ class CodecAugmentation(torch.nn.Module):
             x_hat_list.append(
                 x_i_hat
             )
-        x_hat = torch.cat(x_hat_list, dim=0)
+        x_hat = torch.stack(x_hat_list, dim=0)
 
         # Use straight through estimator to pass gradients when training
         if self.training:
