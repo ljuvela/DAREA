@@ -72,8 +72,6 @@ class NoiseAugmentation(torch.nn.Module):
         snr = torch.empty(batch_size, channels).uniform_(
             self.min_snr, self.max_snr).to(waveform.device)
 
-        print(noise.size(), waveform.size(), snr.size())
-
         noisy_waveform = torchaudio.functional.add_noise(
             waveform=waveform, noise=noise, 
             snr=snr)
