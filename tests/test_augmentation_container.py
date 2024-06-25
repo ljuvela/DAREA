@@ -16,12 +16,13 @@ def test_augmentation_container_keywords():
         partition='train',
         resample=True,
         shuffle=True,
-        batch_size=2).to(device)
+        batch_size=2,
+        num_random_choose=2).to(device)
     
     iters = 10
     for _ in range(iters):
         x = torch.randn(2, 1, 16000).to(device)
-        y = container(x, num_random_choose=2)
+        y = container(x)
         assert y.size() == x.size()
 
 def test_augmentation_container_all():
@@ -37,11 +38,12 @@ def test_augmentation_container_all():
         partition='train',
         resample=True,
         shuffle=True,
-        batch_size=2).to(device)
+        batch_size=2, 
+        num_random_choose=2).to(device)
     
     iters = 10
     for _ in range(iters):
         x = torch.randn(2, 1, 16000).to(device)
-        y = container(x, num_random_choose=2)
+        y = container(x)
         assert y.size() == x.size()
 

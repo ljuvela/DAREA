@@ -11,19 +11,20 @@ from typing import List
 
 class AugmentationContainer(torch.nn.Module):
 
-    def __init__(self, augmentations):
+    def __init__(self, augmentations, num_random_choose=1):
         super().__init__()
         self.augmentations = torch.nn.ModuleList(augmentations)
+        self.num_random_choose = num_random_choose
 
-    def forward(self, x, num_random_choose=1):
+    def forward(self, x):
 
-        if num_random_choose > len(self.augmentations):
+        if self.num_random_choose > len(self.augmentations):
             raise ValueError(
-                f"Number of augmentations to choose must be less than or equal to the number of augmentations in the container. Got {num_random_choose} and {len(self.augmentations)} augmentations"
+                f"Number of augmentations to choose must be less than or equal to the number of augmentations in the container. Got {self.num_random_choose} and {len(self.augmentations)} augmentations"
             )
 
         chosen_augmentations = torch.randperm(len(self.augmentations))[
-            :num_random_choose
+            :self.num_random_choose
         ]
 
         for idx in chosen_augmentations:
@@ -44,6 +45,7 @@ class AugmentationContainerKeywords(AugmentationContainer):
         resample=True,
         shuffle=True,
         batch_size=1,
+        num_random_choose=1,
     ):
 
         self.sample_rate = sample_rate
@@ -53,6 +55,7 @@ class AugmentationContainerKeywords(AugmentationContainer):
         self.resample = resample
         self.shuffle = shuffle
         self.batch_size = batch_size
+        self.num_random_choose = num_random_choose
 
         augmentation_modules = []
         for aug in augmentations:
@@ -91,10 +94,10 @@ class AugmentationContainerKeywords(AugmentationContainer):
             else:
                 raise ValueError(f"Unknown augmentation {aug}")
 
-        super().__init__(augmentation_modules)
+        super().__init__(augmentation_modules, num_random_choose)
 
-    def forward(self, x, num_random_choose=1):
-        return super().forward(x, num_random_choose)
+    def forward(self, x):
+        return super().forward(x)
 
 
 class AugmentationContainerAllDarea(AugmentationContainerKeywords):
@@ -108,19 +111,21 @@ class AugmentationContainerAllDarea(AugmentationContainerKeywords):
         resample=True,
         shuffle=True,
         batch_size=1,
+        num_random_choose=1,
     ):
 
         augmentations = ["noise", "reverb", "codec_mp3", "codec_ogg"]
         super().__init__(
-            augmentations,
-            sample_rate,
-            segment_size,
-            num_workers,
-            partition,
-            resample,
-            shuffle,
-            batch_size,
+            augmentations=augmentations,
+            sample_rate=sample_rate,
+            segment_size=segment_size,
+            num_workers=num_workers,
+            partition=partition,
+            resample=resample,
+            shuffle=shuffle,
+            batch_size=batch_size,
+            num_random_choose=num_random_choose
         )
 
-    def forward(self, x, num_random_choose=1):
-        return super().forward(x, num_random_choose)
+    def forward(self, x):
+        return super().forward(x)
