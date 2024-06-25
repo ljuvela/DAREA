@@ -21,7 +21,7 @@ class WhiteNoiseDataset(torch.utils.data.Dataset):
 
 class NoiseAugmentation(torch.nn.Module):
     def __init__(self, dataset, batch_size, num_workers=0,
-                 min_snr=-35, max_snr=-20.0):
+                 min_snr=20, max_snr=35.0):
         super().__init__()
         self.dataset = dataset
         self.min_snr = min_snr
@@ -60,6 +60,8 @@ class NoiseAugmentation(torch.nn.Module):
             noisy_waveform, shape (batch, channels=1, time) 
         """
 
+        if waveform.dim() != 3:
+            raise ValueError(f"Expected waveform to have 3 dimensions (batch, channels, time). Got {waveform.dim()}")
         batch_size, channels, timesteps = waveform.size()
 
         noise = next(self._noise_generator())
