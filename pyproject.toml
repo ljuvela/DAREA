@@ -9,7 +9,6 @@ authors = [
   {name = "Lauri Juvela", email = "lauri.juvela@aalto.fi" }
 ]
 
-
 [tool.setuptools]
 include-package-data = true
 

@@ -85,6 +85,17 @@ pip install -e .
 ## Augmentation types
 
 
+## Composition
+
+Option 1:
+- independent trigger possibility for any effect in the pool of N
+- number of effects is between 0 and N
+- torch audiomentations approach
+
+Option 2:
+- randomly choose k effects from a pool of N 
+- always has k effects 
+
 ## Checklist
 
 - Energy normalise to -24dBFS

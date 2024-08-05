@@ -10,4 +10,5 @@ def get_data_path():
         raise RuntimeError("Environment variable DAREA_DATA_PATH is not set! "
                            "Please set it to the path where the data should be stored ")
 
+    path = os.path.realpath(path)
     return path
