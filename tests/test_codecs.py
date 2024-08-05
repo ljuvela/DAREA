@@ -2,12 +2,15 @@ import pytest
 import torch
 from darea.augmentation.codecs import CodecAugmentation
 
-formats = ['wav', 'mp3', 'mp3-32', 'mp3-8', 'ogg']
+formats = ['mp3', 'ogg-vorbis', 'ogg-opus']
 
+bitrates = [8000, 16000, 32000, 92000]
+
+@pytest.mark.parametrize('bitrate', bitrates)
 @pytest.mark.parametrize('format', formats)
-def test_codecs_forward(format):
+def test_codecs_forward(bitrate, format):
     
-    codec = CodecAugmentation(format=format)
+    codec = CodecAugmentation(format=format, bitrate=bitrate)
 
     batch = 2
     channels = 1
@@ -17,10 +20,12 @@ def test_codecs_forward(format):
 
     assert y.shape == x.shape
 
-@pytest.mark.parametrize('format', formats)
-def test_codecs_gradient_pass(format):
 
-    codec = CodecAugmentation(format=format)
+@pytest.mark.parametrize('bitrate', bitrates)
+@pytest.mark.parametrize('format', formats)
+def test_codecs_gradient_pass(bitrate, format):
+
+    codec = CodecAugmentation(format=format, bitrate=bitrate)
     codec.train()
 
     batch = 2
@@ -47,7 +52,7 @@ def test_codecs_cuda():
 
     device = torch.device('cuda')
 
-    codec = CodecAugmentation(format='ogg').to(device)
+    codec = CodecAugmentation(format='ogg-vorbis').to(device)
     codec.train()
 
     batch = 2
