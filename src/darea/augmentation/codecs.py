@@ -3,11 +3,14 @@ import torchaudio
 from torchaudio.io import CodecConfig, AudioEffector
 
 class CodecAugmentation(torch.nn.Module):
-    def __init__(self, format:str, sample_rate=16000):
+    def __init__(self, format:str, sample_rate=16000, bitrate=32000):
         """
 
-        Args:
-
+        Args: 
+            format (str): Codec format. Supported formats are 'mp3', 'ogg-vorbis' and 'ogg-opus'
+            sample_rate (int): Sample rate of the audio signal
+            bitrate (int): Bitrate of the codec. The bitrate is in bits per second. 
+                The default value is 32000.
 
         More details in 
         https://pytorch.org/audio/2.3.0/generated/torchaudio.io.AudioEffector.html#torchaudio.io.AudioEffector
@@ -16,17 +19,14 @@ class CodecAugmentation(torch.nn.Module):
         """
         super(CodecAugmentation, self).__init__()
         self.sample_rate = sample_rate
+        self.bitrate = bitrate
 
-        if format == "wav":
-            self.codec = AudioEffector(format='wav')
-        elif format == "mp3":
-            self.codec = AudioEffector(format='mp3')
-        elif format == "mp3-32":
-            self.codec = AudioEffector(format='mp3', codec_config=CodecConfig(bit_rate=32000))
-        elif format == "mp3-8":
-            self.codec = AudioEffector(format='mp3', codec_config=CodecConfig(bit_rate=8000))
-        elif format == "ogg":
-            self.codec = AudioEffector(format='ogg')
+        if format == "mp3":
+            self.codec = AudioEffector(format='mp3', codec_config=CodecConfig(bit_rate=bitrate))
+        elif format == "ogg-vorbis":
+            self.codec = AudioEffector(format="ogg", encoder="vorbis", codec_config=CodecConfig(bit_rate=bitrate))
+        elif format == "ogg-opus":
+            self.codec = AudioEffector(format="ogg", encoder="opus", codec_config=CodecConfig(bit_rate=bitrate))
         else:
             raise ValueError(f"Format '{format}' not supported")
 
