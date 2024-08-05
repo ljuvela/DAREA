@@ -83,13 +83,41 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 augmentation_modules.append(
                     ConvolutionReverbAugment(dataset, num_workers=num_workers)
                 )
-            elif aug == "codec_mp3":
+            elif aug == "codec_mp3_8kbit":
                 augmentation_modules.append(
-                    CodecAugmentation(format="mp3", sample_rate=16000)
+                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=8000)
                 )
-            elif aug == "codec_ogg":
+            elif aug == "codec_mp3_32kbit":
                 augmentation_modules.append(
-                    CodecAugmentation(format="ogg", sample_rate=16000)
+                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=32000)
+                )
+            elif aug == "codec_mp3_92kbit":
+                augmentation_modules.append(
+                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=92000)
+                )
+            elif aug == "codec_ogg_vorbis_8kbit":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=8000)
+                )
+            elif aug == "codec_ogg_vorbis_32kbit":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=32000)
+                )
+            elif aug == "codec_ogg_vorbis_92kbit":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=92000)
+                )
+            elif aug == "codec_ogg_opus_8kbit":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=8000)
+                )
+            elif aug == "codec_ogg_opus_32kbit":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=32000)
+                )
+            elif aug == "codec_ogg_opus_92kbit":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=92000)
                 )
             else:
                 raise ValueError(f"Unknown augmentation {aug}")
@@ -114,7 +142,7 @@ class AugmentationContainerAllDarea(AugmentationContainerKeywords):
         num_random_choose=1,
     ):
 
-        augmentations = ["noise", "reverb", "codec_mp3", "codec_ogg"]
+        augmentations = ["noise", "reverb", "codec_mp3_32kbit", "codec_ogg_vorbis_32kbit"]
         super().__init__(
             augmentations=augmentations,
             sample_rate=sample_rate,
