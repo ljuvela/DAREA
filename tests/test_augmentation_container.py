@@ -4,15 +4,27 @@ import torch
 
 def test_augmentation_container_codecs():
 
-    keywords = ['codec_mp3_8kbit',
-                'codec_mp3_32kbit',
-                'codec_mp3_92kbit',
-                'codec_ogg_vorbis_8kbit',
-                'codec_ogg_vorbis_32kbit',
-                'codec_ogg_vorbis_92kbit',
-                'codec_ogg_opus_8kbit',
-                'codec_ogg_opus_32kbit',
-                'codec_ogg_opus_92kbit']
+    keywords = ['codec_mp3_8kbps',
+                'codec_mp3_16kbps',
+                'codec_mp3_32kbps',
+                'codec_mp3_92kbps',
+                'codec_mp3_128kbps',
+                'codec_mp3_256kbps',
+                'codec_ogg_vorbis_8kbps',
+                'codec_ogg_vorbis_16kbps',
+                'codec_ogg_vorbis_32kbps',
+                'codec_ogg_vorbis_64kbps',
+                'codec_ogg_vorbis_92kbps',
+                'codec_ogg_opus_8kbps',
+                'codec_ogg_opus_16kbps',
+                'codec_ogg_opus_16kbps',
+                'codec_ogg_opus_32kbps',
+                'codec_ogg_opus_92kbps',
+                'codec_g722_48kbps'
+                'codec_g722_56kbps'
+                'codec_g722_64kbps',
+                'codec_speex',
+                'codec_gsm']
                 
     torch.manual_seed(0)
     device = 'cuda' if torch.cuda.is_available() else 'cpu'

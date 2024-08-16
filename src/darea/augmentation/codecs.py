@@ -27,6 +27,12 @@ class CodecAugmentation(torch.nn.Module):
             self.codec = AudioEffector(format="ogg", encoder="vorbis", codec_config=CodecConfig(bit_rate=bitrate))
         elif format == "ogg-opus":
             self.codec = AudioEffector(format="ogg", encoder="opus", codec_config=CodecConfig(bit_rate=bitrate))
+        elif format == "g722":
+            self.codec = AudioEffector(format="wav", encoder="g722", codec_config=CodecConfig(bit_rate=bitrate))
+        elif format == "speex":
+            self.codec = AudioEffector(format="ogg", encoder="speex", codec_config=CodecConfig(bit_rate=bitrate))
+        elif format == "gsm":
+            self.codec = AudioEffector(format="gsm", encoder="libgsm", codec_config=CodecConfig(bit_rate=bitrate))
         else:
             raise ValueError(f"Format '{format}' not supported")
 
@@ -55,6 +61,11 @@ class CodecAugmentation(torch.nn.Module):
                 x_i_hat
             )
         x_hat = torch.stack(x_hat_list, dim=0)
+
+        # cut the input and output to the same length
+        timesteps = min(x.size(-1), x_hat.size(-1))
+        x = x[..., :timesteps]
+        x_hat = x_hat[..., :timesteps]
 
         # Use straight through estimator to pass gradients when training
         if self.training:
