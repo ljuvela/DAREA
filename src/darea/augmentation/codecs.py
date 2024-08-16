@@ -1,6 +1,8 @@
 import torch
 import torchaudio
 from torchaudio.io import CodecConfig, AudioEffector
+import torchaudio.transforms as T
+
 
 class CodecAugmentation(torch.nn.Module):
     def __init__(self, format:str, sample_rate=16000, bitrate=32000):
@@ -30,7 +32,7 @@ class CodecAugmentation(torch.nn.Module):
         elif format == "g722":
             self.codec = AudioEffector(format="wav", encoder="g722", codec_config=CodecConfig(bit_rate=bitrate))
         elif format == "speex":
-            self.codec = AudioEffector(format="ogg", encoder="speex", codec_config=CodecConfig(bit_rate=bitrate))
+            self.codec = AudioEffector(format="ogg", encoder="libspeex", codec_config=CodecConfig(bit_rate=bitrate))
         elif format == "gsm":
             self.codec = AudioEffector(format="gsm", encoder="libgsm", codec_config=CodecConfig(bit_rate=bitrate))
         else:

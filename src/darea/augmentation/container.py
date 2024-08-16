@@ -119,6 +119,10 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 augmentation_modules.append(
                     CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=32000)
                 )
+            elif aug == "codec_ogg_vorbis_64kbps":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=64000)
+                )
             elif aug == "codec_ogg_vorbis_92kbps":
                 augmentation_modules.append(
                     CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=92000)
