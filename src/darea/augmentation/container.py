@@ -127,6 +127,10 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 augmentation_modules.append(
                     CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=92000)
                 )
+            elif aug == "codec_ogg_vorbis_128kbps":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=128000)
+                )
             elif aug == "codec_ogg_opus_8kbps":
                 augmentation_modules.append(
                     CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=8000)
@@ -146,6 +150,10 @@ class AugmentationContainerKeywords(AugmentationContainer):
             elif aug == "codec_ogg_opus_92kbps":
                 augmentation_modules.append(
                     CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=92000)
+                )
+            elif aug == "codec_ogg_opus_128kbps":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=128000)
                 )
             elif aug == "codec_g722_48kbps":
                 augmentation_modules.append(
@@ -178,6 +186,10 @@ class AugmentationContainerKeywords(AugmentationContainer):
             elif aug == "codec_speex":
                 augmentation_modules.append(
                     CodecAugmentation(format="speex", sample_rate=sample_rate)
+                )
+            elif aug == "codec_g723_1":
+                augmentation_modules.append(
+                    CodecAugmentation(format="g723_1", sample_rate=sample_rate)
                 )
             else:
                 raise ValueError(f"Unknown augmentation {aug}")

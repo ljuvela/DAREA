@@ -45,6 +45,30 @@ def test_codecs_gradient_pass(bitrate, format):
     assert torch.allclose(x.grad, y.grad)
 
 
+def test_g723_1_forward():
+    
+    format = 'g723_1'
+    codec = CodecAugmentation(format=format)
+
+    batch = 2
+    channels = 1
+    samples = 16000
+    x = torch.randn(batch, channels, samples)
+    y = codec(x)
+    assert y.shape == x.shape
+
+def test_g726_forward():
+        
+        format = 'g726'
+        codec = CodecAugmentation(format=format)
+    
+        batch = 2
+        channels = 1
+        samples = 16000
+        x = torch.randn(batch, channels, samples)
+        y = codec(x)
+        assert y.shape == x.shape
+
 def test_codecs_cuda():
 
     if not torch.cuda.is_available():

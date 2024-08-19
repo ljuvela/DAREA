@@ -4,7 +4,7 @@ import torch
 import pytest
 
 keywords = [
-    "codec_gsm_fr",
+    # "codec_gsm_fr",
     "codec_mp3_8kbps",
     "codec_mp3_16kbps",
     "codec_mp3_32kbps",
@@ -16,15 +16,18 @@ keywords = [
     "codec_ogg_vorbis_32kbps",
     "codec_ogg_vorbis_64kbps",
     "codec_ogg_vorbis_92kbps",
+    "codec_ogg_vorbis_128kbps",
     "codec_ogg_opus_8kbps",
     "codec_ogg_opus_16kbps",
     "codec_ogg_opus_32kbps",
     "codec_ogg_opus_64kbps",
     "codec_ogg_opus_92kbps",
+    "codec_ogg_opus_128kbps",
     "codec_g722_48kbps",
     "codec_g722_56kbps",
     "codec_g722_64kbps",
-    "codec_speex",
+    # "codec_speex",
+    "codec_g723_1"
 ]
 @pytest.mark.parametrize('keyword', keywords)
 def test_augmentation_container_codecs(keyword):

@@ -2,6 +2,52 @@ import torch
 import torchaudio
 from torchaudio.io import CodecConfig, AudioEffector
 import torchaudio.transforms as T
+import os
+
+import soundfile as sf
+
+import tempfile
+from subprocess import DEVNULL, STDOUT, check_call
+import subprocess
+
+
+class FfMpegCommandLineWrapper():
+
+    def __init__(self, codec, host_sample_rate=16000, codec_sample_rate=16000, bitrate=None):
+
+        self.host_sample_rate = host_sample_rate
+        self.codec_sample_rate = codec_sample_rate
+        self.bitrate = bitrate
+        self.codec = codec
+
+    def apply(self, x, sample_rate):
+
+        # use temp directory
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_input = f"{temp_dir}/temp.wav"
+            temp_coded = f"{temp_dir}/temp_coded.wav"
+            temp_output = f"{temp_dir}/temp_output.wav"
+            # torchaudio.save(temp_input, x, sample_rate)
+            sf.write(temp_input, x.numpy().squeeze(), sample_rate)
+
+            if self.bitrate is None:
+                cmd = f"ffmpeg -y -i {temp_input} -ar {self.codec_sample_rate} -c:a {self.codec} {temp_coded}"
+            else:
+                cmd = f"ffmpeg -y -i {temp_input} -ar {self.codec_sample_rate} -b:a {self.bitrate} -c:a {self.codec} {temp_coded}"
+
+            # os.system(cmd)
+            os.popen(cmd).read()
+            # subprocess.Popen(cmd, stdout=DEVNULL, stderr=DEVNULL).wait()
+
+            cmd = f"ffmpeg -y -i {temp_coded} -ar {sample_rate} -c:a pcm_s16le {temp_output}"
+            # os.system(cmd)
+            os.popen(cmd).read()
+
+            # load the audio file
+            x_hat, sr = torchaudio.load(temp_output)
+            x_hat = x_hat.T
+
+        return x_hat
 
 
 class CodecAugmentation(torch.nn.Module):
@@ -25,6 +71,8 @@ class CodecAugmentation(torch.nn.Module):
 
         if format == "mp3":
             self.codec = AudioEffector(format='mp3', codec_config=CodecConfig(bit_rate=bitrate))
+        elif format == "aac":
+            self.codec = AudioEffector(format="aac", codec_config=CodecConfig(bit_rate=bitrate))
         elif format == "ogg-vorbis":
             self.codec = AudioEffector(format="ogg", encoder="vorbis", codec_config=CodecConfig(bit_rate=bitrate))
         elif format == "ogg-opus":
@@ -35,6 +83,11 @@ class CodecAugmentation(torch.nn.Module):
             self.codec = AudioEffector(format="ogg", encoder="libspeex", codec_config=CodecConfig(bit_rate=bitrate))
         elif format == "gsm":
             self.codec = AudioEffector(format="gsm", encoder="libgsm", codec_config=CodecConfig(bit_rate=bitrate))
+        elif format == "g723_1":
+            # self.codec = AudioEffector(format="g723_1", encoder="g723_1", codec_config=CodecConfig(bit_rate=bitrate))
+            self.codec = FfMpegCommandLineWrapper(codec='g723_1', host_sample_rate=sample_rate, codec_sample_rate=8000, bitrate=6300)
+        elif format == "g726":
+            self.codec = AudioEffector(format="g726", encoder="g726", codec_config=CodecConfig(bit_rate=bitrate))
         else:
             raise ValueError(f"Format '{format}' not supported")
 
