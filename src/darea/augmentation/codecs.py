@@ -10,6 +10,8 @@ import tempfile
 from subprocess import DEVNULL, STDOUT, check_call
 import subprocess
 
+from .estimators import StrightThroughEstimator
+
 
 class FfMpegCommandLineWrapper():
 
@@ -51,7 +53,7 @@ class FfMpegCommandLineWrapper():
 
 
 class CodecAugmentation(torch.nn.Module):
-    def __init__(self, format:str, sample_rate=16000, bitrate=32000):
+    def __init__(self, format:str, sample_rate=16000, bitrate=32000, grad_clip_norm_level=None):
         """
 
         Args: 
@@ -68,6 +70,8 @@ class CodecAugmentation(torch.nn.Module):
         super(CodecAugmentation, self).__init__()
         self.sample_rate = sample_rate
         self.bitrate = bitrate
+
+        self.ste = StrightThroughEstimator(grad_clip_norm_level)
 
         if format == "mp3":
             self.codec = AudioEffector(format='mp3', codec_config=CodecConfig(bit_rate=bitrate))
@@ -124,6 +128,7 @@ class CodecAugmentation(torch.nn.Module):
 
         # Use straight through estimator to pass gradients when training
         if self.training:
-            return x + x_hat - x.detach()
+            return self.ste(x, x_hat)
+            # return x + x_hat - x.detach()
         else:
             return x_hat

@@ -46,6 +46,7 @@ class AugmentationContainerKeywords(AugmentationContainer):
         shuffle=True,
         batch_size=1,
         num_random_choose=1,
+        grad_clip_norm_level=None,
     ):
 
         self.sample_rate = sample_rate
@@ -85,111 +86,111 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 )
             elif aug == "codec_mp3_8kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=8000)
+                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=8000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_mp3_16kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=16000)
+                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=16000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_mp3_32kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=32000)
+                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=32000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_mp3_92kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=92000)
+                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=92000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_mp3_128kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=128000)
+                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=128000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_mp3_64kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=128000)
+                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=128000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_ogg_vorbis_8kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=8000)
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=8000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_ogg_vorbis_16kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=16000)
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=16000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_ogg_vorbis_32kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=32000)
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=32000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_ogg_vorbis_64kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=64000)
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=64000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_ogg_vorbis_92kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=92000)
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=92000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_ogg_vorbis_128kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=128000)
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=128000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_ogg_opus_8kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=8000)
+                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=8000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_ogg_opus_16kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=16000)
+                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=16000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_ogg_opus_32kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=32000)
+                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=32000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_ogg_opus_64kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=64000)
+                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=64000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_ogg_opus_92kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=92000)
+                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=92000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_ogg_opus_128kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=128000)
+                    CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=128000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_g722_48kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="g722", sample_rate=sample_rate, bitrate=48000)
+                    CodecAugmentation(format="g722", sample_rate=sample_rate, bitrate=48000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_g722_56kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="g722", sample_rate=sample_rate, bitrate=56000)
+                    CodecAugmentation(format="g722", sample_rate=sample_rate, bitrate=56000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_g722_64kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="g722", sample_rate=sample_rate, bitrate=64000)
+                    CodecAugmentation(format="g722", sample_rate=sample_rate, bitrate=64000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_speex_8kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="speex", sample_rate=sample_rate, bitrate=8000)
+                    CodecAugmentation(format="speex", sample_rate=sample_rate, bitrate=8000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_speex_16kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="speex", sample_rate=sample_rate, bitrate=16000)
+                    CodecAugmentation(format="speex", sample_rate=sample_rate, bitrate=16000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_speex_32kbps":
                 augmentation_modules.append(
-                    CodecAugmentation(format="speex", sample_rate=sample_rate, bitrate=32000)
+                    CodecAugmentation(format="speex", sample_rate=sample_rate, bitrate=32000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_gsm_fr":
                 augmentation_modules.append(
-                    CodecAugmentation(format="gsm", sample_rate=sample_rate)
+                    CodecAugmentation(format="gsm", sample_rate=sample_rate, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_speex":
                 augmentation_modules.append(
-                    CodecAugmentation(format="speex", sample_rate=sample_rate)
+                    CodecAugmentation(format="speex", sample_rate=sample_rate, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_g723_1":
                 augmentation_modules.append(
-                    CodecAugmentation(format="g723_1", sample_rate=sample_rate)
+                    CodecAugmentation(format="g723_1", sample_rate=sample_rate, grad_clip_norm_level=grad_clip_norm_level)
                 )
             else:
                 raise ValueError(f"Unknown augmentation {aug}")
