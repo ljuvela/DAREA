@@ -2,6 +2,7 @@ import torch
 
 from .noise import NoiseAugmentation
 from .codecs import CodecAugmentation
+from .neural_codecs import NeuralCodecAugmentation
 from .room_impulse import ConvolutionReverbAugment
 
 from ..datasets.mit_rir import MIT_RIR_Dataset
@@ -191,6 +192,10 @@ class AugmentationContainerKeywords(AugmentationContainer):
             elif aug == "codec_g723_1":
                 augmentation_modules.append(
                     CodecAugmentation(format="g723_1", sample_rate=sample_rate, grad_clip_norm_level=grad_clip_norm_level)
+                )
+            elif aug == "codec_dac_8kbps":
+                augmentation_modules.append(
+                    NeuralCodecAugmentation(sample_rate=sample_rate)
                 )
             else:
                 raise ValueError(f"Unknown augmentation {aug}")

@@ -27,7 +27,8 @@ keywords = [
     "codec_g722_56kbps",
     "codec_g722_64kbps",
     # "codec_speex",
-    "codec_g723_1"
+    "codec_g723_1",
+    "codec_dac_8kbps",
 ]
 @pytest.mark.parametrize('keyword', keywords)
 def test_augmentation_container_codecs(keyword):
@@ -38,8 +39,8 @@ def test_augmentation_container_codecs(keyword):
 
     container = AugmentationContainerKeywords(
         augmentations=[keyword],
-        sample_rate=16000,
-        segment_size=16000,
+        sample_rate=22050,
+        segment_size=22050,
         num_workers=0,
         partition='train',
         resample=True,
