@@ -97,15 +97,15 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 augmentation_modules.append(
                     CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=32000, grad_clip_norm_level=grad_clip_norm_level)
                 )
+            elif aug == "codec_mp3_64kbps":
+                augmentation_modules.append(
+                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=64000, grad_clip_norm_level=grad_clip_norm_level)
+                )
             elif aug == "codec_mp3_92kbps":
                 augmentation_modules.append(
                     CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=92000, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_mp3_128kbps":
-                augmentation_modules.append(
-                    CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=128000, grad_clip_norm_level=grad_clip_norm_level)
-                )
-            elif aug == "codec_mp3_64kbps":
                 augmentation_modules.append(
                     CodecAugmentation(format="mp3", sample_rate=sample_rate, bitrate=128000, grad_clip_norm_level=grad_clip_norm_level)
                 )
