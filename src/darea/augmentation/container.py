@@ -133,6 +133,18 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 augmentation_modules.append(
                     CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, bitrate=128000, grad_clip_norm_level=grad_clip_norm_level)
                 )
+            elif aug == "codec_ogg_vorbis_q-2":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, q_factor=-2, grad_clip_norm_level=grad_clip_norm_level)
+                )
+            elif aug == "codec_ogg_vorbis_q0":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, q_factor=0, grad_clip_norm_level=grad_clip_norm_level)
+                )
+            elif aug == "codec_ogg_vorbis_q4":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, q_factor=4, grad_clip_norm_level=grad_clip_norm_level)
+                )
             elif aug == "codec_ogg_opus_8kbps":
                 augmentation_modules.append(
                     CodecAugmentation(format="ogg-opus", sample_rate=sample_rate, bitrate=8000, grad_clip_norm_level=grad_clip_norm_level)
@@ -191,7 +203,7 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 )
             elif aug == "codec_g723_1":
                 augmentation_modules.append(
-                    CodecAugmentation(format="g723_1", sample_rate=sample_rate, grad_clip_norm_level=grad_clip_norm_level)
+                    CodecAugmentation(format="g723_1", bitrate=64000, sample_rate=sample_rate, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_dac_8kbps":
                 augmentation_modules.append(

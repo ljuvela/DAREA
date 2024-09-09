@@ -53,14 +53,17 @@ class FfMpegCommandLineWrapper():
 
 
 class CodecAugmentation(torch.nn.Module):
-    def __init__(self, format:str, sample_rate=16000, bitrate=32000, grad_clip_norm_level=None):
+    def __init__(self, format:str, sample_rate=16000, bitrate=None, q_factor=None, grad_clip_norm_level=None):
         """
 
         Args: 
             format (str): Codec format. Supported formats are 'mp3', 'ogg-vorbis' and 'ogg-opus'
             sample_rate (int): Sample rate of the audio signal
+            q_factor (int): Quality factor of the codec. The quality factor is a number between -2 and 10.
             bitrate (int): Bitrate of the codec. The bitrate is in bits per second. 
                 The default value is 32000.
+
+        Choose either q_factor or bitrate. If both are provided, ValueError will be raised.
 
         More details in 
         https://pytorch.org/audio/2.3.0/generated/torchaudio.io.AudioEffector.html#torchaudio.io.AudioEffector
@@ -71,22 +74,31 @@ class CodecAugmentation(torch.nn.Module):
         self.sample_rate = sample_rate
         self.bitrate = bitrate
 
+        if q_factor is not None and bitrate is not None:
+            raise ValueError("Choose either q_factor or bitrate, not both")
+        
+        if q_factor is None and bitrate is None:
+            raise ValueError("Choose either q_factor or bitrate")
+
         self.ste = StrightThroughEstimator(grad_clip_norm_level)
 
+        if bitrate is None:
+            bitrate = -1 # Default value for bitrate in torchaudio bindings
+
         if format == "mp3":
-            self.codec = AudioEffector(format='mp3', codec_config=CodecConfig(bit_rate=bitrate))
+            self.codec = AudioEffector(format='mp3', codec_config=CodecConfig(bit_rate=bitrate, qscale=q_factor))
         elif format == "aac":
-            self.codec = AudioEffector(format="aac", codec_config=CodecConfig(bit_rate=bitrate))
+            self.codec = AudioEffector(format="aac", codec_config=CodecConfig(bit_rate=bitrate, qscale=q_factor))
         elif format == "ogg-vorbis":
-            self.codec = AudioEffector(format="ogg", encoder="vorbis", codec_config=CodecConfig(bit_rate=bitrate))
+            self.codec = AudioEffector(format="ogg", encoder="vorbis", codec_config=CodecConfig(bit_rate=bitrate, qscale=q_factor))
         elif format == "ogg-opus":
-            self.codec = AudioEffector(format="ogg", encoder="opus", codec_config=CodecConfig(bit_rate=bitrate))
+            self.codec = AudioEffector(format="ogg", encoder="opus", codec_config=CodecConfig(bit_rate=bitrate, qscale=q_factor))
         elif format == "g722":
-            self.codec = AudioEffector(format="wav", encoder="g722", codec_config=CodecConfig(bit_rate=bitrate))
+            self.codec = AudioEffector(format="wav", encoder="g722", codec_config=CodecConfig(bit_rate=bitrate, qscale=q_factor))
         elif format == "speex":
-            self.codec = AudioEffector(format="ogg", encoder="libspeex", codec_config=CodecConfig(bit_rate=bitrate))
+            self.codec = AudioEffector(format="ogg", encoder="libspeex", codec_config=CodecConfig(bit_rate=bitrate, qscale=q_factor))
         elif format == "gsm":
-            self.codec = AudioEffector(format="gsm", encoder="libgsm", codec_config=CodecConfig(bit_rate=bitrate))
+            self.codec = AudioEffector(format="gsm", encoder="libgsm", codec_config=CodecConfig(bit_rate=bitrate, qscale=q_factor))
         elif format == "g723_1":
             # self.codec = AudioEffector(format="g723_1", encoder="g723_1", codec_config=CodecConfig(bit_rate=bitrate))
             self.codec = FfMpegCommandLineWrapper(codec='g723_1', host_sample_rate=sample_rate, codec_sample_rate=8000, bitrate=6300)

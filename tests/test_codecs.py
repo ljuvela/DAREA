@@ -1,6 +1,8 @@
 import pytest
 import torch
+import itertools
 from darea.augmentation.codecs import CodecAugmentation
+
 
 formats = ['mp3', 'ogg-vorbis', 'ogg-opus']
 
@@ -44,6 +46,31 @@ def test_codecs_gradient_pass(bitrate, format):
 
     assert torch.allclose(x.grad, y.grad)
 
+
+def test_vorbis_q_factors():
+
+    format = 'ogg-vorbis'
+
+    batch = 2
+    channels = 1
+    samples = 16000
+    x = torch.randn(batch, channels, samples)
+
+    q_factors = [-2, 0, 4]
+    results = {}
+
+    for q_factor in q_factors:
+        codec = CodecAugmentation(format=format, q_factor=q_factor)
+        y = codec(x)
+        assert y.shape == x.shape
+        results[q_factor] = y
+
+    # Check that the outputs are different (all combinations)
+    for i, j in itertools.combinations(q_factors, 2):
+        assert not torch.allclose(results[i], results[j]), f"results for q_factor {i} and {j} are the same"
+
+
+
 def test_codec_gradient_pass_normalized():
 
     codec = CodecAugmentation(format='ogg-vorbis', bitrate=32000, grad_clip_norm_level=1.0)
@@ -69,7 +96,7 @@ def test_codec_gradient_pass_normalized():
 def test_g723_1_forward():
     
     format = 'g723_1'
-    codec = CodecAugmentation(format=format)
+    codec = CodecAugmentation(format=format, bitrate=64000)
 
     batch = 2
     channels = 1
