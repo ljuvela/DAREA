@@ -56,7 +56,7 @@ def test_vorbis_q_factors():
     samples = 16000
     x = torch.randn(batch, channels, samples)
 
-    q_factors = [-2, 0, 4]
+    q_factors = [0, 1, 2, 3, 4]
     results = {}
 
     for q_factor in q_factors:
@@ -68,7 +68,6 @@ def test_vorbis_q_factors():
     # Check that the outputs are different (all combinations)
     for i, j in itertools.combinations(q_factors, 2):
         assert not torch.allclose(results[i], results[j]), f"results for q_factor {i} and {j} are the same"
-
 
 
 def test_codec_gradient_pass_normalized():
@@ -106,10 +105,10 @@ def test_g723_1_forward():
     assert y.shape == x.shape
 
 # def test_g726_forward():
-        
+
 #         format = 'g726'
 #         codec = CodecAugmentation(format=format)
-    
+
 #         batch = 2
 #         channels = 1
 #         samples = 16000

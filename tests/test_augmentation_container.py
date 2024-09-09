@@ -19,6 +19,8 @@ keywords = [
     "codec_ogg_vorbis_128kbps",
     "codec_ogg_vorbis_q-2",
     "codec_ogg_vorbis_q0",
+    "codec_ogg_vorbis_q1",
+    "codec_ogg_vorbis_q2",
     "codec_ogg_vorbis_q4",
     "codec_ogg_opus_8kbps",
     "codec_ogg_opus_16kbps",

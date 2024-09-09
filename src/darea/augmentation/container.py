@@ -141,6 +141,14 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 augmentation_modules.append(
                     CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, q_factor=0, grad_clip_norm_level=grad_clip_norm_level)
                 )
+            elif aug == "codec_ogg_vorbis_q1":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, q_factor=1, grad_clip_norm_level=grad_clip_norm_level)
+                )
+            elif aug == "codec_ogg_vorbis_q2":
+                augmentation_modules.append(
+                    CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, q_factor=2, grad_clip_norm_level=grad_clip_norm_level)
+                )
             elif aug == "codec_ogg_vorbis_q4":
                 augmentation_modules.append(
                     CodecAugmentation(format="ogg-vorbis", sample_rate=sample_rate, q_factor=4, grad_clip_norm_level=grad_clip_norm_level)
