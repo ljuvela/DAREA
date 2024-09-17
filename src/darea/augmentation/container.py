@@ -10,6 +10,15 @@ from ..datasets.musan import Musan_Dataset
 
 from typing import List
 
+class DummyAugmentation(torch.nn.Module):
+    """Dummy augmentation class for no augmentation
+    """
+    def __init__(self):
+        super().__init__()
+        
+    def forward(self, x):
+        return x
+
 class AugmentationContainer(torch.nn.Module):
 
     def __init__(self, augmentations, num_random_choose=1):
@@ -221,6 +230,10 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 augmentation_modules.append(
                     NeuralCodecAugmentation(sample_rate=sample_rate)
                 )
+            elif aug == "nocodec":
+                # for no codec, add a dummy module
+                augmentation_modules.append(DummyAugmentation())
+                
             else:
                 raise ValueError(f"Unknown augmentation {aug}")
 
