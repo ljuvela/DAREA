@@ -6,7 +6,7 @@ from darea.augmentation.codecs import CodecAugmentation
 
 formats = ['mp3', 'ogg-vorbis', 'ogg-opus']
 
-bitrates = [8000, 16000, 32000, 92000]
+bitrates = [16000, 32000, 64000, 92000, 128000]
 
 @pytest.mark.parametrize('bitrate', bitrates)
 @pytest.mark.parametrize('format', formats)

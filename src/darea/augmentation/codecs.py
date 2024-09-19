@@ -88,6 +88,7 @@ class CodecAugmentation(torch.nn.Module):
         if format == "mp3":
             self.codec = AudioEffector(format='mp3', codec_config=CodecConfig(bit_rate=bitrate, qscale=q_factor))
         elif format == "aac":
+            raise NotImplementedError("AAC codec is not supported")
             self.codec = AudioEffector(format="aac", codec_config=CodecConfig(bit_rate=bitrate, qscale=q_factor))
         elif format == "ogg-vorbis":
             self.codec = AudioEffector(format="ogg", encoder="vorbis", codec_config=CodecConfig(bit_rate=bitrate, qscale=q_factor))

@@ -64,11 +64,12 @@ class MIT_RIR_Dataset(AudioDataset):
         'val': files('darea.filelists.mit_rir').joinpath('valid_list.txt'),
         'test': files('darea.filelists.mit_rir').joinpath('test_list.txt'),
     }
-    data_path = os.path.join(get_data_path(), "mit_rir")
 
     def __init__(self, sampling_rate=16000, segment_size=None, split=True,
                  shuffle=True, n_cache_reuse=1, resample=False, device=None,
                  partition='train', download=False):
+
+        self.data_path = os.path.join(get_data_path(), "mit_rir")
 
         if partition == 'train':
             filelist = MIT_RIR_Dataset.filelists['train']
@@ -83,7 +84,7 @@ class MIT_RIR_Dataset(AudioDataset):
         files_text = filelist.read_text()
         files = files_text.split('\n')
         files_full_path = [os.path.join(
-            MIT_RIR_Dataset.data_path, "Audio", f) for f in files]
+            self.data_path, "Audio", f) for f in files]
 
         super().__init__(files_full_path, sampling_rate, segment_size,
                          split, shuffle, n_cache_reuse, resample, device)
@@ -94,14 +95,14 @@ class MIT_RIR_Dataset(AudioDataset):
                 self.download()
             else:
                 raise FileNotFoundError(
-                    f"Data not found at {MIT_RIR_Dataset.data_path}!"
+                    f"Data not found at {self.data_path}!"
                     f"Please set the download flag to True to download it from {MIT_RIR_Dataset.url}")
 
     def __getitem__(self, index):
         return super().__getitem__(index)
 
     def check_files(self):
-        data_path = MIT_RIR_Dataset.data_path
+        data_path = self.data_path
         audio_path = os.path.join(data_path, "Audio")
 
         # check if audio files are already present
@@ -119,7 +120,7 @@ class MIT_RIR_Dataset(AudioDataset):
 
     def download(self):
 
-        data_path = MIT_RIR_Dataset.data_path
+        data_path = self.data_path
         audio_path = os.path.join(data_path, "Audio")
 
         # check if the files already exist
