@@ -6,6 +6,7 @@ from .neural_codecs import NeuralCodecAugmentation
 from .room_impulse import ConvolutionReverbAugment
 from .filters import LowPassFilterAugmentation, HighPassFilterAugmentation
 from .dropout import SampleDropoutAugmentation, StftDropoutAugmentation
+from .time_stretch import TimeStretchAugmentation
 
 from ..datasets.mit_rir import MIT_RIR_Dataset
 from ..datasets.musan import Musan_Dataset
@@ -111,6 +112,12 @@ class AugmentationContainerKeywords(AugmentationContainer):
             elif aug == 'stft_dropout':
                 augmentation_modules.append(
                     StftDropoutAugmentation(p=0.001)
+                )
+            elif aug == "time_stretch":
+                augmentation_modules.append(
+                    TimeStretchAugmentation(sample_rate=sample_rate,
+                                             min_rate=0.90,
+                                             max_rate=1.10)
                 )
             elif aug == "codec_mp3_8kbps":
                 augmentation_modules.append(

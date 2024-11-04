@@ -14,7 +14,6 @@ class WhiteNoiseDataset(torch.utils.data.Dataset):
         return self.num_samples
 
     def __getitem__(self, idx):
-        import ipdb; ipdb.set_trace()
         return torch.randn(self.segment_len).unsqueeze(0)
 
 
