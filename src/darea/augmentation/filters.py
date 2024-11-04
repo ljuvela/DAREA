@@ -1,6 +1,5 @@
 import torch
 import torchaudio
-import numpy as np
 
 def check_cutoff_freq(cutoff_freq, sample_rate):
 

@@ -4,6 +4,8 @@ from .noise import NoiseAugmentation
 from .codecs import CodecAugmentation
 from .neural_codecs import NeuralCodecAugmentation
 from .room_impulse import ConvolutionReverbAugment
+from .filters import LowPassFilterAugmentation, HighPassFilterAugmentation
+from .dropout import SampleDropoutAugmentation, StftDropoutAugmentation
 
 from ..datasets.mit_rir import MIT_RIR_Dataset
 from ..datasets.musan import Musan_Dataset
@@ -49,7 +51,7 @@ class AugmentationContainerKeywords(AugmentationContainer):
         self,
         augmentations: List[str],
         sample_rate,
-        segment_size,
+        segment_size=None,
         num_workers=0,
         partition="train",
         resample=True,
@@ -93,6 +95,22 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 )
                 augmentation_modules.append(
                     ConvolutionReverbAugment(dataset, num_workers=num_workers)
+                )
+            elif aug == "lowpass_4kHz":
+                augmentation_modules.append(
+                    LowPassFilterAugmentation(cutoff_freq_min=4000, cutoff_freq_max=4000, sample_rate=sample_rate)
+                )
+            elif aug == "highpass_500Hz":
+                augmentation_modules.append(
+                    HighPassFilterAugmentation(cutoff_freq_min=500, cutoff_freq_max=500, sample_rate=sample_rate)
+                )
+            elif aug == 'sample_dropout':
+                augmentation_modules.append(
+                    SampleDropoutAugmentation(p=0.001)
+                )
+            elif aug == 'stft_dropout':
+                augmentation_modules.append(
+                    StftDropoutAugmentation(p=0.001)
                 )
             elif aug == "codec_mp3_8kbps":
                 augmentation_modules.append(
