@@ -42,7 +42,8 @@ class Musan_Dataset(AudioDataset):
             self.data_path, "musan", "noise", "free-sound", f) for f in files]
 
         super().__init__(files_full_path, sampling_rate, segment_size,
-                         split, shuffle, n_cache_reuse, resample, device)
+                         split, shuffle, n_cache_reuse, resample, device,
+                         padding_mode="reflect")
 
         files_found = self.check_files()
         if not files_found:

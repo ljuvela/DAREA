@@ -48,6 +48,47 @@ class AugmentationContainer(torch.nn.Module):
 
 class AugmentationContainerKeywords(AugmentationContainer):
 
+    def list_valid_augmentation_keywords(self):
+        return [
+            "musan_noise",
+            "mit_rir_reverb",
+            "lowpass_4kHz",
+            "highpass_500Hz",
+            "sample_dropout",
+            "stft_dropout",
+            "time_stretch",
+            "codec_mp3_8kbps",
+            "codec_mp3_16kbps",
+            "codec_mp3_32kbps",
+            "codec_mp3_64kbps",
+            "codec_mp3_92kbps",
+            "codec_mp3_128kbps",
+            "codec_ogg_vorbis_8kbps",
+            "codec_ogg_vorbis_16kbps",
+            "codec_ogg_vorbis_32kbps",
+            "codec_ogg_vorbis_64kbps",
+            "codec_ogg_vorbis_92kbps",
+            "codec_ogg_vorbis_128kbps",
+            "codec_ogg_vorbis_q-2",
+            "codec_ogg_vorbis_q0",
+            "codec_ogg_vorbis_q1",
+            "codec_ogg_vorbis_q2",
+            "codec_ogg_vorbis_q3",
+            "codec_ogg_vorbis_q4",
+            "codec_ogg_opus_8kbps",
+            "codec_ogg_opus_16kbps",
+            "codec_ogg_opus_32kbps",
+            "codec_ogg_opus_64kbps",
+            "codec_ogg_opus_92kbps",
+            "codec_ogg_opus_128kbps",
+            "codec_g722_48kbps",
+            "codec_g722_56kbps",
+            "codec_g722_64kbps",
+            "codec_g723_1",
+            "codec_dac_8kbps",
+            "nocodec",
+        ]
+
     def __init__(
         self,
         augmentations: List[str],
@@ -73,7 +114,7 @@ class AugmentationContainerKeywords(AugmentationContainer):
 
         augmentation_modules = []
         for aug in augmentations:
-            if aug == "noise":
+            if aug == "musan_noise":
                 dataset = Musan_Dataset(
                     sampling_rate=sample_rate,
                     segment_size=segment_size,
@@ -83,10 +124,14 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 )
                 augmentation_modules.append(
                     NoiseAugmentation(
-                        dataset, batch_size=batch_size, num_workers=num_workers
+                        dataset,
+                        batch_size=batch_size,
+                        num_workers=num_workers,
+                        min_snr=20,
+                        max_snr=35.0,
                     )
                 )
-            elif aug == "reverb":
+            elif aug == "mit_rir_reverb":
                 dataset = MIT_RIR_Dataset(
                     sampling_rate=sample_rate,
                     segment_size=segment_size,
@@ -227,26 +272,6 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 augmentation_modules.append(
                     CodecAugmentation(format="g722", sample_rate=sample_rate, bitrate=64000, grad_clip_norm_level=grad_clip_norm_level)
                 )
-            elif aug == "codec_speex_8kbps":
-                augmentation_modules.append(
-                    CodecAugmentation(format="speex", sample_rate=sample_rate, bitrate=8000, grad_clip_norm_level=grad_clip_norm_level)
-                )
-            elif aug == "codec_speex_16kbps":
-                augmentation_modules.append(
-                    CodecAugmentation(format="speex", sample_rate=sample_rate, bitrate=16000, grad_clip_norm_level=grad_clip_norm_level)
-                )
-            elif aug == "codec_speex_32kbps":
-                augmentation_modules.append(
-                    CodecAugmentation(format="speex", sample_rate=sample_rate, bitrate=32000, grad_clip_norm_level=grad_clip_norm_level)
-                )
-            elif aug == "codec_gsm_fr":
-                augmentation_modules.append(
-                    CodecAugmentation(format="gsm", sample_rate=sample_rate, grad_clip_norm_level=grad_clip_norm_level)
-                )
-            elif aug == "codec_speex":
-                augmentation_modules.append(
-                    CodecAugmentation(format="speex", sample_rate=sample_rate, grad_clip_norm_level=grad_clip_norm_level)
-                )
             elif aug == "codec_g723_1":
                 augmentation_modules.append(
                     CodecAugmentation(format="g723_1", bitrate=64000, sample_rate=sample_rate, grad_clip_norm_level=grad_clip_norm_level)
@@ -258,9 +283,9 @@ class AugmentationContainerKeywords(AugmentationContainer):
             elif aug == "nocodec":
                 # for no codec, add a dummy module
                 augmentation_modules.append(DummyAugmentation())
-                
+
             else:
-                raise ValueError(f"Unknown augmentation {aug}")
+                raise ValueError(f"Unknown augmentation '{aug}'")
 
         super().__init__(augmentation_modules, num_random_choose)
 
@@ -282,7 +307,7 @@ class AugmentationContainerAllDarea(AugmentationContainerKeywords):
         num_random_choose=1,
     ):
 
-        augmentations = ["noise", "reverb", "codec_mp3_32kbps", "codec_ogg_vorbis_32kbps"]
+        augmentations = self.list_valid_augmentation_keywords()
         super().__init__(
             augmentations=augmentations,
             sample_rate=sample_rate,

@@ -1,5 +1,6 @@
 user_scripts/*
 output/*
+render/output/*
 
 triton_env.sh
 

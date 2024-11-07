@@ -65,7 +65,7 @@ def test_augmentation_container_keywords():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     container = AugmentationContainerKeywords(
-        augmentations=['noise', 'reverb'],
+        augmentations=['musan_noise', 'mit_rir_reverb'],
         sample_rate=16000,
         segment_size=16000,
         num_workers=0,

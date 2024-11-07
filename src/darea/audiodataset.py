@@ -29,12 +29,17 @@ class AudioDataset(torch.utils.data.Dataset):
 
     def __init__(
         self,
-        training_files, sampling_rate,
+        training_files,
+        sampling_rate,
         segment_size=None,
-        split=True, shuffle=True,
-        n_cache_reuse=1, resample=False,
-            device=None):
-        
+        split=True,
+        shuffle=True,
+        n_cache_reuse=1,
+        resample=False,
+        device=None,
+        padding_mode="constant",
+    ):
+
         self.audio_files = training_files
         random.seed(1234)
         if shuffle:
@@ -48,6 +53,7 @@ class AudioDataset(torch.utils.data.Dataset):
         self.resample = resample
         self.resamplers = torch.nn.ModuleDict()
         self.device = device
+        self.padding_mode = padding_mode
 
     def __getitem__(self, index):
         filename = self.audio_files[index]
@@ -82,14 +88,12 @@ class AudioDataset(torch.utils.data.Dataset):
                 audio_start = random.randint(0, max_audio_start)
                 audio = audio[:, audio_start:audio_start+self.segment_size]
             else:
-                audio = torch.nn.functional.pad(audio, (0, self.segment_size - audio.size(1)), 'constant')
+                audio = torch.nn.functional.pad(audio, (0, self.segment_size - audio.size(1)), mode=self.padding_mode)
 
         return (audio, filename)
 
     def __len__(self):
         return len(self.audio_files)
-
-
 
 
 if __name__ == "__main__":
