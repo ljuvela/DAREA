@@ -17,6 +17,32 @@ def test_time_stretch():
 
     assert y.shape == x.shape
 
+def test_time_stretch_up():
+
+    stretch = TimeStretchAugmentation(sample_rate=22050, min_rate=1.0, max_rate=2.0)
+    batch = 2
+    channels = 1
+    samples = 16000
+
+    x = torch.randn(batch, channels, samples)
+
+    y = stretch(x)
+
+    assert y.shape == x.shape
+
+def test_time_stretch_down():
+
+    stretch = TimeStretchAugmentation(sample_rate=22050, min_rate=0.5, max_rate=1.0)
+    batch = 2
+    channels = 1
+    samples = 16000
+
+    x = torch.randn(batch, channels, samples)
+
+    y = stretch(x)
+
+    assert y.shape == x.shape
+
 def test_time_stretch_grad():
 
     stretch = TimeStretchAugmentation(sample_rate=22050, min_rate=0.5, max_rate=2.0)
