@@ -1,5 +1,5 @@
 import torch
-import torchaudio
+import torch.nn.functional as F
 
 class TimeStretchAugmentation(torch.nn.Module):
 
@@ -19,17 +19,10 @@ class TimeStretchAugmentation(torch.nn.Module):
             raise ValueError(f"Expected mono audio, got {x.size(1)} channels")
 
         rate = torch.rand(1) * (self.max_rate - self.min_rate) + self.min_rate
-        # stretch by resampling
-        base_sr = torch.tensor(self.sample_rate).float()
-        new_sr = base_sr // rate
+        scale_factor = 1/rate
+        y = F.interpolate(input=x, size=int(scale_factor*x.size(-1)), mode='linear')
 
-        y = torchaudio.functional.resample(x, base_sr, new_sr)
-
-        # pad or trim to the original length
-        timesteps = x.size(-1)
-        if y.size(-1) < timesteps:
-            y = torch.nn.functional.pad(y, (0, timesteps - y.size(-1)))
-        elif y.size(-1) > timesteps:
-            y = y[..., :timesteps]
+        # negative pad values truncate the signal
+        y = torch.nn.functional.pad(y, pad=(x.size(-1)-y.size(-1), 0), mode='constant', value=0.0)
 
         return y

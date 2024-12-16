@@ -88,7 +88,13 @@ class AudioDataset(torch.utils.data.Dataset):
                 audio_start = random.randint(0, max_audio_start)
                 audio = audio[:, audio_start:audio_start+self.segment_size]
             else:
-                audio = torch.nn.functional.pad(audio, (0, self.segment_size - audio.size(1)), mode=self.padding_mode)
+
+                if self.padding_mode == 'repeat':
+                    n_repeats = self.segment_size // audio.size(1) + 1
+                    audio = audio.repeat(1, n_repeats)
+                    audio = audio[:, :self.segment_size]
+                else:
+                    audio = torch.nn.functional.pad(audio, (0, self.segment_size - audio.size(1)), mode=self.padding_mode)
 
         return (audio, filename)
 

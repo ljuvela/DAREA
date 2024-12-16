@@ -43,7 +43,7 @@ class Musan_Dataset(AudioDataset):
 
         super().__init__(files_full_path, sampling_rate, segment_size,
                          split, shuffle, n_cache_reuse, resample, device,
-                         padding_mode="reflect")
+                         padding_mode="repeat")
 
         files_found = self.check_files()
         if not files_found:
