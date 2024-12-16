@@ -10,7 +10,7 @@ import tempfile
 from subprocess import DEVNULL, STDOUT, check_call
 import subprocess
 
-from .estimators import StrightThroughEstimator
+from .estimators import StraightThroughEstimator
 
 
 class FfMpegCommandLineWrapper():
@@ -80,7 +80,7 @@ class CodecAugmentation(torch.nn.Module):
         if q_factor is None and bitrate is None:
             raise ValueError("Choose either q_factor or bitrate")
 
-        self.ste = StrightThroughEstimator(grad_clip_norm_level)
+        self.ste = StraightThroughEstimator(grad_clip_norm_level)
 
         if bitrate is None:
             bitrate = -1 # Default value for bitrate in torchaudio bindings
@@ -105,6 +105,8 @@ class CodecAugmentation(torch.nn.Module):
             self.codec = FfMpegCommandLineWrapper(codec='g723_1', host_sample_rate=sample_rate, codec_sample_rate=8000, bitrate=6300)
         elif format == "g726":
             self.codec = AudioEffector(format="g726", encoder="g726", codec_config=CodecConfig(bit_rate=bitrate))
+        elif format == "pcm16":
+            self.codec = AudioEffector(format="wav", encoder="pcm_s16le")
         else:
             raise ValueError(f"Format '{format}' not supported")
 

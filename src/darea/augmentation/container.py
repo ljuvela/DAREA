@@ -86,6 +86,7 @@ class AugmentationContainerKeywords(AugmentationContainer):
             "codec_g722_64kbps",
             "codec_g723_1",
             "codec_dac_8kbps",
+            "codec_pcm16"
             "nocodec",
         ]
 
@@ -163,6 +164,10 @@ class AugmentationContainerKeywords(AugmentationContainer):
                     TimeStretchAugmentation(sample_rate=sample_rate,
                                              min_rate=0.90,
                                              max_rate=1.10)
+                )
+            elif aug == "codec_pcm16":
+                augmentation_modules.append(
+                    CodecAugmentation(format="pcm16", sample_rate=sample_rate, bitrate=16*sample_rate, grad_clip_norm_level=grad_clip_norm_level)
                 )
             elif aug == "codec_mp3_8kbps":
                 augmentation_modules.append(

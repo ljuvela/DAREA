@@ -1,7 +1,7 @@
 import torch
 
 
-class StrightThroughEstimatorFunction(torch.autograd.Function):
+class StraightThroughEstimatorFunction(torch.autograd.Function):
 
     @staticmethod
     def forward(ctx, x, x_hat, clip_norm_level=0.0):
@@ -20,14 +20,13 @@ class StrightThroughEstimatorFunction(torch.autograd.Function):
             grad_input_scaled = grad_input / norm * ctx.clip_norm_level
             grad_input = torch.where(mask, grad_input_scaled, grad_input)
 
-
         return grad_input, grad_input, None
     
 
-class StrightThroughEstimator(torch.nn.Module):
+class StraightThroughEstimator(torch.nn.Module):
 
     def __init__(self, clip_norm_level=None):
-        super(StrightThroughEstimator, self).__init__()
+        super(StraightThroughEstimator, self).__init__()
         if clip_norm_level is None:
             clip_norm_level = 0.0
         else:
@@ -35,5 +34,5 @@ class StrightThroughEstimator(torch.nn.Module):
         self.clip_norm_level = clip_norm_level
 
     def forward(self, x, x_hat):
-        return StrightThroughEstimatorFunction.apply(x, x_hat, self.clip_norm_level)
+        return StraightThroughEstimatorFunction.apply(x, x_hat, self.clip_norm_level)
     

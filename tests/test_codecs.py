@@ -23,6 +23,22 @@ def test_codecs_forward(bitrate, format):
     assert y.shape == x.shape
 
 
+
+def test_pcm16_forward():
+    
+    bitrate = 16
+    sample_rate = 16000
+    codec = CodecAugmentation(format='pcm16', bitrate=16 * bitrate, sample_rate=sample_rate)
+
+    batch = 2
+    channels = 1
+    samples = 16000
+    x = torch.randn(batch, channels, samples)
+    y = codec(x)
+
+    assert y.shape == x.shape
+
+
 @pytest.mark.parametrize('bitrate', bitrates)
 @pytest.mark.parametrize('format', formats)
 def test_codecs_gradient_pass(bitrate, format):

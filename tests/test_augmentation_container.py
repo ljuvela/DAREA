@@ -32,6 +32,7 @@ keywords = [
     "codec_g722_48kbps",
     "codec_g722_56kbps",
     "codec_g722_64kbps",
+    "codec_pcm16",
     # "codec_speex",
     "codec_g723_1",
     "codec_dac_8kbps",

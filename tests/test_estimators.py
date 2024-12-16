@@ -1,5 +1,5 @@
 import torch
-from darea.augmentation.estimators import StrightThroughEstimator
+from darea.augmentation.estimators import StraightThroughEstimator
 
 def test_round_no_grad():
 
@@ -27,7 +27,7 @@ def test_ste():
 
     x_hat = torch.round(x)
 
-    ste = StrightThroughEstimator(clip_norm_level=None)
+    ste = StraightThroughEstimator(clip_norm_level=None)
 
     z = ste(x, x_hat)
     z.retain_grad()
@@ -55,7 +55,7 @@ def test_ste_norm():
     x_hat = torch.round(x)
 
     # check that gradient norm is clipped to 1
-    ste = StrightThroughEstimator(clip_norm_level=1.0)
+    ste = StraightThroughEstimator(clip_norm_level=1.0)
     z = ste(x, x_hat)
     z.retain_grad()
 
