@@ -2,7 +2,7 @@ import torch
 
 from .noise import NoiseAugmentation
 from .codecs import CodecAugmentation
-from .neural_codecs import NeuralCodecAugmentation
+from .neural_codecs import DacAugmentation
 from .room_impulse import ConvolutionReverbAugment
 from .filters import LowPassFilterAugmentation, HighPassFilterAugmentation
 from .dropout import SampleDropoutAugmentation, StftDropoutAugmentation
@@ -283,7 +283,7 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 )
             elif aug == "codec_dac_8kbps":
                 augmentation_modules.append(
-                    NeuralCodecAugmentation(sample_rate=sample_rate)
+                    DacAugmentation(sample_rate=sample_rate)
                 )
             elif aug == "nocodec":
                 # for no codec, add a dummy module
