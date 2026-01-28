@@ -4,7 +4,7 @@ channels:
   - pytorch
   - conda-forge
 dependencies:
-  - python
+  - python=3.10
   - pytorch
   - torchvision
   - torchaudio>2.3
@@ -16,3 +16,6 @@ dependencies:
   - numpy
   - ffmpeg<7
   - speex
+  - pip:
+    - descript-audio-codec
+    - git+https://github.com/ollipauna/encodec.git@main

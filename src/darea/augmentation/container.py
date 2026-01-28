@@ -2,7 +2,7 @@ import torch
 
 from .noise import NoiseAugmentation
 from .codecs import CodecAugmentation
-from .neural_codecs import DacAugmentation
+from .neural_codecs import DacAugmentation, EncodecAugmentation
 from .room_impulse import ConvolutionReverbAugment
 from .filters import LowPassFilterAugmentation, HighPassFilterAugmentation
 from .dropout import SampleDropoutAugmentation, StftDropoutAugmentation
@@ -86,6 +86,11 @@ class AugmentationContainerKeywords(AugmentationContainer):
             "codec_g722_64kbps",
             "codec_g723_1",
             "codec_dac_8kbps",
+            "codec_encodec_1.5kbps",
+            "codec_encodec_3kbps",
+            "codec_encodec_6kbps",
+            "codec_encodec_12kbps",
+            "codec_encodec_24kbps",
             "codec_pcm16"
             "nocodec",
         ]
@@ -284,6 +289,26 @@ class AugmentationContainerKeywords(AugmentationContainer):
             elif aug == "codec_dac_8kbps":
                 augmentation_modules.append(
                     DacAugmentation(sample_rate=sample_rate)
+                )
+            elif aug == "codec_encodec_1.5kbps":
+                augmentation_modules.append(
+                    EncodecAugmentation(sample_rate=sample_rate, bandwidth=1.5)
+                )
+            elif aug == "codec_encodec_3kbps":
+                augmentation_modules.append(
+                    EncodecAugmentation(sample_rate=sample_rate, bandwidth=3)
+                )
+            elif aug == "codec_encodec_6kbps":
+                augmentation_modules.append(
+                    EncodecAugmentation(sample_rate=sample_rate, bandwidth=6)
+                )
+            elif aug == "codec_encodec_12kbps":
+                augmentation_modules.append(
+                    EncodecAugmentation(sample_rate=sample_rate, bandwidth=12)
+                )
+            elif aug == "codec_encodec_24kbps":
+                augmentation_modules.append(
+                    EncodecAugmentation(sample_rate=sample_rate, bandwidth=24)
                 )
             elif aug == "nocodec":
                 # for no codec, add a dummy module
