@@ -61,7 +61,7 @@ class EncodecAugmentation(torch.nn.Module):
         if bandwidth:
             self.model.set_target_bandwidth(bandwidth)
    
-        self.model.eval()
+        self.model.train() # cuda needs this for RNN gradient tracking
 
         self.sample_rate = sample_rate
         if self.sample_rate != self.encodec_sample_rate:
