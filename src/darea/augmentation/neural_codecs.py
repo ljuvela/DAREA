@@ -3,6 +3,9 @@ import dac
 import os
 from encodec import EncodecModel
 from torchaudio.transforms import Resample
+from speechtokenizer import SpeechTokenizer
+from transformers import MimiModel, AutoFeatureExtractor
+import ipdb
 
 class DacAugmentation(torch.nn.Module):
     def __init__(self, sample_rate=16000):
@@ -87,6 +90,110 @@ class EncodecAugmentation(torch.nn.Module):
 
         if self.sample_rate != self.encodec_sample_rate:
             x = self.resampler_from_encodec(x)
+
+        # cut to the original length
+        x = x[:, :, :timesteps]
+
+        return x
+    
+
+class MimiAugmentation(torch.nn.Module):
+    # eval only
+    # https://huggingface.co/kyutai/mimi
+    def __init__(self, sample_rate=16000):
+        super(MimiAugmentation, self).__init__()
+        self.sample_rate = sample_rate
+
+
+        model_path = "kyutai/mimi"
+        self.model = MimiModel.from_pretrained(model_path)
+        feature_extractor = AutoFeatureExtractor.from_pretrained("kyutai/mimi")
+        self.mimi_sample_rate = feature_extractor.sampling_rate # 24000
+
+        self.model.eval()
+
+        self.sample_rate = sample_rate
+        if self.sample_rate != self.mimi_sample_rate:
+            self.resampler_to_mimi = Resample(orig_freq=self.sample_rate, new_freq=self.mimi_sample_rate)
+            self.resampler_from_mimi = Resample(orig_freq=self.mimi_sample_rate, new_freq=self.sample_rate)
+
+    def forward(self, x):
+
+        if x.ndim != 3:
+            raise ValueError(f"Expected input of shape (batch, channels=1, timestesps), got {x.shape}")
+        if x.size(1) != 1:
+            raise ValueError(f"Expected single channel input, got {x.shape}")
+
+        timesteps = x.size(-1)
+        
+
+        if self.sample_rate != self.mimi_sample_rate:
+            x = self.resampler_to_mimi(x)
+        
+        # 1 = input value should be attended to 
+        audio_values = self.model(x).audio_values
+
+        x = audio_values
+
+        if self.sample_rate != self.mimi_sample_rate:
+            x = self.resampler_from_mimi(x)
+
+        # cut to the original length
+        x = x[:, :, :timesteps]
+
+        return x
+    
+
+class SpeechTokenizerAugmentation(torch.nn.Module):
+    def __init__(self, sample_rate=16000):
+        # eval only
+        # https://github.com/ZhangXInFD/SpeechTokenizer
+        super(SpeechTokenizerAugmentation, self).__init__()
+        self.sample_rate = sample_rate
+
+        path = os.environ.get('SPEECH_TOKENIZER_PATH', None)
+
+        if path is None:
+            raise RuntimeError("Environment variable SPEECH_TOKENIZER_PATH is not set! "
+                               "Please set it to the path where the model config should be stored ")
+
+
+        config_path = 'config.json'
+        ckpt_path = 'SpeechTokenizer.pt'
+
+        config_path = os.path.join(path, config_path) 
+        ckpt_path = os.path.join(path, ckpt_path) 
+
+        self.model = SpeechTokenizer.load_from_checkpoint(config_path, ckpt_path)
+
+        self.st_sample_rate = self.model.sample_rate # 16000
+        self.model.eval()
+
+        self.sample_rate = sample_rate
+        if self.sample_rate != self.st_sample_rate:
+            self.resampler_to_st = Resample(orig_freq=self.sample_rate, new_freq=self.st_sample_rate)
+            self.resampler_from_st = Resample(orig_freq=self.st_sample_rate, new_freq=self.sample_rate)
+
+
+    def forward(self, x):
+
+        if x.ndim != 3:
+            raise ValueError(f"Expected input of shape (batch, channels=1, timestesps), got {x.shape}")
+        if x.size(1) != 1:
+            raise ValueError(f"Expected single channel input, got {x.shape}")
+
+        timesteps = x.size(-1)
+        
+
+        if self.sample_rate != self.st_sample_rate:
+            x = self.resampler_to_st(x)
+        
+        audio_values = self.model(x) # codes: (n_q, B, T)
+        
+        x, _, _ = audio_values
+
+        if self.sample_rate != self.st_sample_rate:
+            x = self.resampler_from_st(x)
 
         # cut to the original length
         x = x[:, :, :timesteps]

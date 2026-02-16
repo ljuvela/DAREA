@@ -2,6 +2,9 @@ import torch
 
 from darea.augmentation.neural_codecs import DacAugmentation
 from darea.augmentation.neural_codecs import EncodecAugmentation
+from darea.augmentation.neural_codecs import MimiAugmentation
+from darea.augmentation.neural_codecs import SpeechTokenizerAugmentation
+
 
 
 def test_dac():
@@ -12,7 +15,7 @@ def test_dac():
     codec = DacAugmentation(sample_rate=sample_rate)
 
     # Create a random audio signal
-    x = torch.randn(1, 1, 16000)
+    x = torch.randn(2, 1, 16000)
     x = torch.nn.Parameter(x, requires_grad=True)
 
     x_hat = codec(x)
@@ -30,12 +33,11 @@ def test_dac():
 def test_encodec():
 
     sample_rate = 22050
-
     
     for bandwidth in [1.5, 3., 6, 12., 24.]:
         codec = EncodecAugmentation(sample_rate=sample_rate, bandwidth=bandwidth)
         # Create a random audio signal
-        x = torch.randn(1, 1, 16000)
+        x = torch.randn(2, 1, 16000)
         x = torch.nn.Parameter(x, requires_grad=True)
 
         x_hat = codec(x)
@@ -49,3 +51,31 @@ def test_encodec():
         assert x.grad is not None
 
 
+def test_mimi():
+    sample_rate = 22050
+
+    # Create a codec
+    codec = MimiAugmentation(sample_rate=sample_rate)
+
+    # Create a random audio signal
+    x = torch.randn(2, 1, 16000)
+    x = torch.nn.Parameter(x, requires_grad=False)
+
+    x_hat = codec(x)
+
+    assert x_hat.size() == x.size()
+
+
+def test_st():
+    sample_rate = 22050
+
+    # Create a codec
+    codec = SpeechTokenizerAugmentation(sample_rate=sample_rate)
+
+    # Create a random audio signal
+    x = torch.randn(2, 1, 16000)
+    x = torch.nn.Parameter(x, requires_grad=False)
+
+    x_hat = codec(x)
+
+    assert x_hat.size() == x.size()

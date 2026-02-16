@@ -10,6 +10,7 @@ dependencies:
   - torchaudio>2.3
   - pytorch
   - git-lfs
+  - transformers
   - torchaudio
   - pysoundfile
   - pytest 
@@ -19,3 +20,5 @@ dependencies:
   - pip:
     - descript-audio-codec
     - git+https://github.com/ollipauna/encodec.git@main
+    - speechtokenizer
+    - beartype

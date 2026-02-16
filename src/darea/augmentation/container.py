@@ -2,7 +2,7 @@ import torch
 
 from .noise import NoiseAugmentation
 from .codecs import CodecAugmentation
-from .neural_codecs import DacAugmentation, EncodecAugmentation
+from .neural_codecs import *
 from .room_impulse import ConvolutionReverbAugment
 from .filters import LowPassFilterAugmentation, HighPassFilterAugmentation
 from .dropout import SampleDropoutAugmentation, StftDropoutAugmentation
@@ -91,6 +91,8 @@ class AugmentationContainerKeywords(AugmentationContainer):
             "codec_encodec_6kbps",
             "codec_encodec_12kbps",
             "codec_encodec_24kbps",
+            "codec_speech_tokenizer", # eval only
+            "codec_mimi", # eval only
             "codec_pcm16"
             "nocodec",
         ]
@@ -309,6 +311,14 @@ class AugmentationContainerKeywords(AugmentationContainer):
             elif aug == "codec_encodec_24kbps":
                 augmentation_modules.append(
                     EncodecAugmentation(sample_rate=sample_rate, bandwidth=24)
+                )
+            elif aug == "codec_speech_tokenizer":
+                augmentation_modules.append(
+                    SpeechTokenizerAugmentation(sample_rate=sample_rate)
+                )
+            elif aug == "codec_mimi":
+                augmentation_modules.append(
+                    MimiAugmentation(sample_rate=sample_rate)
                 )
             elif aug == "nocodec":
                 # for no codec, add a dummy module
