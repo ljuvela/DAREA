@@ -59,11 +59,16 @@ def test_mimi():
 
     # Create a random audio signal
     x = torch.randn(2, 1, 16000)
-    x = torch.nn.Parameter(x, requires_grad=False)
+    x = torch.nn.Parameter(x, requires_grad=True)
 
     x_hat = codec(x)
 
     assert x_hat.size() == x.size()
+
+    loss = x_hat.mean()
+    loss.backward()
+
+    assert x.grad is not None
 
 
 def test_st():
@@ -74,8 +79,13 @@ def test_st():
 
     # Create a random audio signal
     x = torch.randn(2, 1, 16000)
-    x = torch.nn.Parameter(x, requires_grad=False)
+    x = torch.nn.Parameter(x, requires_grad=True)
 
     x_hat = codec(x)
 
     assert x_hat.size() == x.size()
+
+    loss = x_hat.mean()
+    loss.backward()
+
+    assert x.grad is not None

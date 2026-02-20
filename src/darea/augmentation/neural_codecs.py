@@ -4,8 +4,8 @@ import os
 from encodec import EncodecModel
 from torchaudio.transforms import Resample
 from speechtokenizer import SpeechTokenizer
-from transformers import MimiModel, AutoFeatureExtractor
-import ipdb
+from huggingface_hub import hf_hub_download
+from moshi.models import loaders
 
 class DacAugmentation(torch.nn.Module):
     def __init__(self, sample_rate=16000):
@@ -52,7 +52,7 @@ class DacAugmentation(torch.nn.Module):
 
 class EncodecAugmentation(torch.nn.Module):
     def __init__(self, sample_rate=16000, bandwidth=None):
-         # bandwidths [1.5, 3, 6, 12, 24] uses smallest by default
+         # bandwidths [1.5, 3, 6, 12, 24] uses largest by default
         super(EncodecAugmentation, self).__init__()
         self.sample_rate = sample_rate
         self.bandwidth=bandwidth
@@ -98,17 +98,15 @@ class EncodecAugmentation(torch.nn.Module):
     
 
 class MimiAugmentation(torch.nn.Module):
-    # eval only
-    # https://huggingface.co/kyutai/mimi
-    def __init__(self, sample_rate=16000):
+    # https://pypi.org/project/moshi/
+    def __init__(self, sample_rate=16000, n_codebooks=32):
         super(MimiAugmentation, self).__init__()
         self.sample_rate = sample_rate
-
-
-        model_path = "kyutai/mimi"
-        self.model = MimiModel.from_pretrained(model_path)
-        feature_extractor = AutoFeatureExtractor.from_pretrained("kyutai/mimi")
-        self.mimi_sample_rate = feature_extractor.sampling_rate # 24000
+        
+        mimi_weight = hf_hub_download(loaders.DEFAULT_REPO, loaders.MIMI_NAME)
+        self.model = loaders.get_mimi(mimi_weight)
+        self.model.set_num_codebooks(n_codebooks)  #
+        self.mimi_sample_rate = 24000
 
         self.model.eval()
 
@@ -131,12 +129,12 @@ class MimiAugmentation(torch.nn.Module):
             x = self.resampler_to_mimi(x)
         
         # 1 = input value should be attended to 
-        audio_values = self.model(x).audio_values
+        audio_values = self.model(x).x
 
         x = audio_values
 
         if self.sample_rate != self.mimi_sample_rate:
-            x = self.resampler_from_mimi(x)
+            x = self.resampler_from_mimi(x)     
 
         # cut to the original length
         x = x[:, :, :timesteps]
@@ -146,7 +144,6 @@ class MimiAugmentation(torch.nn.Module):
 
 class SpeechTokenizerAugmentation(torch.nn.Module):
     def __init__(self, sample_rate=16000):
-        # eval only
         # https://github.com/ZhangXInFD/SpeechTokenizer
         super(SpeechTokenizerAugmentation, self).__init__()
         self.sample_rate = sample_rate
@@ -183,14 +180,13 @@ class SpeechTokenizerAugmentation(torch.nn.Module):
             raise ValueError(f"Expected single channel input, got {x.shape}")
 
         timesteps = x.size(-1)
-        
 
         if self.sample_rate != self.st_sample_rate:
             x = self.resampler_to_st(x)
         
-        audio_values = self.model(x) # codes: (n_q, B, T)
+        audio_values, _, _ = self.model(x) # codes: (n_q, B, T)
         
-        x, _, _ = audio_values
+        x = audio_values
 
         if self.sample_rate != self.st_sample_rate:
             x = self.resampler_from_st(x)
@@ -199,4 +195,3 @@ class SpeechTokenizerAugmentation(torch.nn.Module):
         x = x[:, :, :timesteps]
 
         return x
-    

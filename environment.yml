@@ -20,5 +20,7 @@ dependencies:
   - pip:
     - descript-audio-codec
     - git+https://github.com/ollipauna/encodec.git@main
-    - speechtokenizer
+    - git+https://github.com/ollipauna/speechtokenizer.git@main
+    - git+https://github.com/ollipauna/moshi.git@main
     - beartype
+  
