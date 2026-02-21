@@ -316,9 +316,25 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 augmentation_modules.append(
                     SpeechTokenizerAugmentation(sample_rate=sample_rate)
                 )
-            elif aug == "codec_mimi":
+            elif aug == "codec_mimi_1cbs":
                 augmentation_modules.append(
-                    MimiAugmentation(sample_rate=sample_rate)
+                    MimiAugmentation(sample_rate=sample_rate, num_codebooks=1)
+                )
+            elif aug == "codec_mimi_4bcs":
+                augmentation_modules.append(
+                    MimiAugmentation(sample_rate=sample_rate, num_codebooks=4)
+                )
+            elif aug == "codec_mimi_8cbs":
+                augmentation_modules.append(
+                    MimiAugmentation(sample_rate=sample_rate, num_codebooks=8)
+                )
+            elif aug == "codec_mimi_16cbs":
+                augmentation_modules.append(
+                    MimiAugmentation(sample_rate=sample_rate, num_codebooks=16)
+                )
+            elif aug == "codec_mimi_32cbs":
+                augmentation_modules.append(
+                    MimiAugmentation(sample_rate=sample_rate, num_codebooks=32)
                 )
             elif aug == "nocodec":
                 # for no codec, add a dummy module

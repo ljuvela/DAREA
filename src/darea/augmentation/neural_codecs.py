@@ -99,13 +99,12 @@ class EncodecAugmentation(torch.nn.Module):
 
 class MimiAugmentation(torch.nn.Module):
     # https://pypi.org/project/moshi/
-    def __init__(self, sample_rate=16000, n_codebooks=32):
+    def __init__(self, sample_rate=16000, num_codebooks=8):
         super(MimiAugmentation, self).__init__()
         self.sample_rate = sample_rate
         
         mimi_weight = hf_hub_download(loaders.DEFAULT_REPO, loaders.MIMI_NAME)
-        self.model = loaders.get_mimi(mimi_weight)
-        self.model.set_num_codebooks(n_codebooks)  #
+        self.model = loaders.get_mimi(mimi_weight, num_codebooks=num_codebooks)
         self.mimi_sample_rate = 24000
 
         self.model.eval()
@@ -145,6 +144,7 @@ class MimiAugmentation(torch.nn.Module):
 class SpeechTokenizerAugmentation(torch.nn.Module):
     def __init__(self, sample_rate=16000):
         # https://github.com/ZhangXInFD/SpeechTokenizer
+        # https://pypi.org/project/speechtokenizer/
         super(SpeechTokenizerAugmentation, self).__init__()
         self.sample_rate = sample_rate
 
