@@ -91,8 +91,13 @@ class AugmentationContainerKeywords(AugmentationContainer):
             "codec_encodec_6kbps",
             "codec_encodec_12kbps",
             "codec_encodec_24kbps",
-            "codec_speech_tokenizer", # eval only
-            "codec_mimi", # eval only
+            "codec_speech_tokenizer_4kbps",
+            "codec_mimi_0.55kbs",
+            "codec_mimi_1.1kbs",
+            "codec_mimi_2.2kbs",
+            "codec_mimi_4.4kbs",
+            "codec_snac_0.98kbs",
+            "codec_big_codec_1.04kbs"
             "codec_pcm16"
             "nocodec",
         ]
@@ -312,29 +317,33 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 augmentation_modules.append(
                     EncodecAugmentation(sample_rate=sample_rate, bandwidth=24)
                 )
-            elif aug == "codec_speech_tokenizer":
+            elif aug == "codec_speech_tokenizer_4kbps":
                 augmentation_modules.append(
                     SpeechTokenizerAugmentation(sample_rate=sample_rate)
                 )
-            elif aug == "codec_mimi_1cbs":
-                augmentation_modules.append(
-                    MimiAugmentation(sample_rate=sample_rate, num_codebooks=1)
-                )
-            elif aug == "codec_mimi_4bcs":
+            elif aug == "codec_mimi_0.55kbs":
                 augmentation_modules.append(
                     MimiAugmentation(sample_rate=sample_rate, num_codebooks=4)
                 )
-            elif aug == "codec_mimi_8cbs":
+            elif aug == "codec_mimi_1.1kbs":
                 augmentation_modules.append(
                     MimiAugmentation(sample_rate=sample_rate, num_codebooks=8)
                 )
-            elif aug == "codec_mimi_16cbs":
+            elif aug == "codec_mimi_2.2kbs":
                 augmentation_modules.append(
                     MimiAugmentation(sample_rate=sample_rate, num_codebooks=16)
                 )
-            elif aug == "codec_mimi_32cbs":
+            elif aug == "codec_mimi_4.4kbs":
                 augmentation_modules.append(
                     MimiAugmentation(sample_rate=sample_rate, num_codebooks=32)
+                )
+            elif aug == 'codec_snac_0.98kbs':
+                augmentation_modules.append(
+                    SnacAugmentation(sample_rate=sample_rate)
+                )
+            elif aug == 'codec_big_codec_1.04kbs':
+                augmentation_modules.append(
+                    BigCodecAugmentation(sample_rate=sample_rate)
                 )
             elif aug == "nocodec":
                 # for no codec, add a dummy module

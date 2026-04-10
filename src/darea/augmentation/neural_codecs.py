@@ -6,6 +6,9 @@ from torchaudio.transforms import Resample
 from speechtokenizer import SpeechTokenizer
 from huggingface_hub import hf_hub_download
 from moshi.models import loaders
+from snac import SNAC
+from bigcodec.vq.codec_encoder import CodecEncoder
+from bigcodec.vq.codec_decoder import CodecDecoder
 
 class DacAugmentation(torch.nn.Module):
     def __init__(self, sample_rate=16000):
@@ -164,7 +167,7 @@ class SpeechTokenizerAugmentation(torch.nn.Module):
         self.model = SpeechTokenizer.load_from_checkpoint(config_path, ckpt_path)
 
         self.st_sample_rate = self.model.sample_rate # 16000
-        self.model.eval()
+        self.model.train() # the model has to be in training mode, similar to encodec
 
         self.sample_rate = sample_rate
         if self.sample_rate != self.st_sample_rate:
@@ -190,6 +193,106 @@ class SpeechTokenizerAugmentation(torch.nn.Module):
 
         if self.sample_rate != self.st_sample_rate:
             x = self.resampler_from_st(x)
+
+        # cut to the original length
+        x = x[:, :, :timesteps]
+
+        return x
+
+
+class SnacAugmentation(torch.nn.Module):
+    def __init__(self, sample_rate=16000):
+        # https://github.com/hubertsiuzdak/snac?tab=readme-ov-file
+        super(SnacAugmentation, self).__init__()
+        self.sample_rate = sample_rate
+
+
+        self.model = SNAC.from_pretrained("hubertsiuzdak/snac_24khz").eval()
+
+        self.snac_sample_rate = 24000 
+
+        self.sample_rate = sample_rate
+        if self.sample_rate != self.snac_sample_rate:
+            self.resampler_to_snac = Resample(orig_freq=self.sample_rate, new_freq=self.snac_sample_rate)
+            self.resampler_from_snac = Resample(orig_freq=self.snac_sample_rate, new_freq=self.sample_rate)
+
+
+    def forward(self, x):
+
+        if x.ndim != 3:
+            raise ValueError(f"Expected input of shape (batch, channels=1, timestesps), got {x.shape}")
+        if x.size(1) != 1:
+            raise ValueError(f"Expected single channel input, got {x.shape}")
+
+        timesteps = x.size(-1)
+
+        if self.sample_rate != self.snac_sample_rate:
+            x = self.resampler_to_snac(x)
+        
+        audio_values, _ = self.model(x)
+        
+        x = audio_values
+
+        if self.sample_rate != self.snac_sample_rate:
+            x = self.resampler_from_snac(x)
+
+        # cut to the original length
+        x = x[:, :, :timesteps]
+
+        return x
+
+
+class BigCodecAugmentation(torch.nn.Module):
+    def __init__(self, sample_rate=16000):
+        # https://github.com/Aria-K-Alethia/BigCodec/tree/main
+        # https://github.com/ollipauna/BigCodec
+        super(BigCodecAugmentation, self).__init__()
+        self.sample_rate = sample_rate
+
+        path = os.environ.get('BIG_CODEC_PATH', None)
+
+        if path is None:
+            raise RuntimeError("Environment variable BIG_CODEC_PATH is not set! "
+                               "Please set it to the path where the model config should be stored ")
+
+        ckpt = torch.load(path, map_location='cpu')
+        encoder = CodecEncoder()
+        encoder.load_state_dict(ckpt['CodecEnc'])
+        self.encoder = encoder.eval()
+        decoder = CodecDecoder()
+        decoder.load_state_dict(ckpt['generator'])
+        self.decoder = decoder.eval()
+
+        self.bc_sample_rate = 16000 
+
+        self.sample_rate = sample_rate
+        if self.sample_rate != self.bc_sample_rate:
+            self.resampler_to_bc = Resample(orig_freq=self.sample_rate, new_freq=self.bc_sample_rate)
+            self.resampler_from_bc = Resample(orig_freq=self.bc_sample_rate, new_freq=self.sample_rate)
+
+
+    def forward(self, x):
+
+        if x.ndim != 3:
+            raise ValueError(f"Expected input of shape (batch, channels=1, timestesps), got {x.shape}")
+        if x.size(1) != 1:
+            raise ValueError(f"Expected single channel input, got {x.shape}")
+
+        timesteps = x.size(-1)
+
+        if self.sample_rate != self.resampler_to_bc:
+            x = self.resampler_to_bc(x)
+        
+        x = torch.nn.functional.pad(x, (0, (200 - (x.shape[-1] % 200))))
+
+        vq_emb = self.encoder(x)
+        vq_post_emb, vq_code, _ = self.decoder(vq_emb, vq=True)
+        recon = self.decoder(vq_post_emb, vq=False)
+        
+        x = recon
+
+        if self.sample_rate != self.resampler_to_bc:
+            x = self.resampler_from_bc(x)
 
         # cut to the original length
         x = x[:, :, :timesteps]
