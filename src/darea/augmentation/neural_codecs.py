@@ -7,8 +7,6 @@ from speechtokenizer import SpeechTokenizer
 from huggingface_hub import hf_hub_download
 from moshi.models import loaders
 from snac import SNAC
-from bigcodec.vq.codec_encoder import CodecEncoder
-from bigcodec.vq.codec_decoder import CodecDecoder
 
 class DacAugmentation(torch.nn.Module):
     def __init__(self, sample_rate=16000):

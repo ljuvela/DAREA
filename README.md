@@ -56,6 +56,11 @@ DAC and SNAC can be installed directly from the official repositories.
 https://github.com/descriptinc/descript-audio-codec
 https://github.com/hubertsiuzdak/snac
 
+```bash
+pip install descript-audio-codec
+pip install snac
+```
+
 However, for training time augmentation with other neural codecs you need to clone and install the following modified implementations. 
 
 https://github.com/ollipauna/encodec
@@ -66,7 +71,7 @@ Or alternatively run
 
 ```bash
 pip install git+https://github.com/ollipauna/encodec.git
-pip install git+https://github.com/ollipauna/speechtokenizer.git
+pip install beartype git+https://github.com/ollipauna/speechtokenizer.git
 pip install "git+https://github.com/ollipauna/moshi.git#egg=moshi&subdirectory=moshi"
 
 ```
