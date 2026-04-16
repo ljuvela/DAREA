@@ -62,6 +62,15 @@ https://github.com/ollipauna/encodec
 https://github.com/ollipauna/speechtokenizer
 https://github.com/ollipauna/moshi
 
+Or alternatively run
+
+```bash
+pip install git+https://github.com/ollipauna/encodec.git
+pip install git+https://github.com/ollipauna/speechtokenizer.git
+pip install "git+https://github.com/ollipauna/moshi.git#egg=moshi&subdirectory=moshi"
+
+```
+
 These repositories implement STE based gradient estimation during inference. Note that the moshi needs to compile C/C++ extensions and requires `gcc` or similar compiler on the system.
 
 
