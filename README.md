@@ -62,7 +62,8 @@ https://github.com/ollipauna/encodec
 https://github.com/ollipauna/speechtokenizer
 https://github.com/ollipauna/moshi
 
-These repositories implement STE based gradient estimation during inference.
+These repositories implement STE based gradient estimation during inference. Note that the moshi needs to compile C/C++ extensions and requires `gcc` or similar compiler on the system.
+
 
 ### STE estimator for conventional codecs
 
