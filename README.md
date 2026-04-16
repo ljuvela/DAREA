@@ -49,19 +49,20 @@ pytest tests/test_mit_rir_dataset.py
 
 ## Dependencies
 
-
 ### Neural audio codecs
 
 DAC and SNAC can be installed directly from the official repositories. 
+
+https://github.com/descriptinc/descript-audio-codec/tree/main/dac
+https://github.com/hubertsiuzdak/snac
 
 However, for training time augmentation with other neural codecs you need to clone and install the following modified implementations. 
 
 https://github.com/ollipauna/encodec
 https://github.com/ollipauna/speechtokenizer
 https://github.com/ollipauna/moshi
-https://github.com/ollipauna/bigcodec
 
-These repositories implement STE based gradient estimation during inference. 
+These repositories implement STE based gradient estimation during inference.
 
 ### STE estimator for conventional codecs
 

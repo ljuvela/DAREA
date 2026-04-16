@@ -23,6 +23,8 @@ class DacAugmentation(torch.nn.Module):
         self.model = dac.DAC.load(model_path)
 
         self.model.eval()
+        self.model.requires_grad_(False)
+
         self.sample_rate = sample_rate
         if self.sample_rate != self.dac_sample_rate:
             self.resampler_to_dac = Resample(orig_freq=self.sample_rate, new_freq=self.dac_sample_rate)
@@ -67,7 +69,8 @@ class EncodecAugmentation(torch.nn.Module):
         if bandwidth:
             self.model.set_target_bandwidth(bandwidth)
    
-        self.model.train() # cuda needs this for RNN gradient tracking
+        self.model.train()  # cudnn RNN backward can only be called in training mode
+        self.model.requires_grad_(False)
 
         self.sample_rate = sample_rate
         if self.sample_rate != self.encodec_sample_rate:
@@ -111,6 +114,7 @@ class MimiAugmentation(torch.nn.Module):
         self.mimi_sample_rate = 24000
 
         self.model.eval()
+        self.model.requires_grad_(False)
 
         self.sample_rate = sample_rate
         if self.sample_rate != self.mimi_sample_rate:
@@ -167,7 +171,8 @@ class SpeechTokenizerAugmentation(torch.nn.Module):
         self.model = SpeechTokenizer.load_from_checkpoint(config_path, ckpt_path)
 
         self.st_sample_rate = self.model.sample_rate # 16000
-        self.model.train() # the model has to be in training mode, similar to encodec
+        self.model.train()  # cudnn RNN backward can only be called in training mode
+        self.model.requires_grad_(False)
 
         self.sample_rate = sample_rate
         if self.sample_rate != self.st_sample_rate:
@@ -208,6 +213,7 @@ class SnacAugmentation(torch.nn.Module):
 
 
         self.model = SNAC.from_pretrained("hubertsiuzdak/snac_24khz").eval()
+        self.model.requires_grad_(False)
 
         self.snac_sample_rate = 24000 
 
@@ -235,64 +241,6 @@ class SnacAugmentation(torch.nn.Module):
 
         if self.sample_rate != self.snac_sample_rate:
             x = self.resampler_from_snac(x)
-
-        # cut to the original length
-        x = x[:, :, :timesteps]
-
-        return x
-
-
-class BigCodecAugmentation(torch.nn.Module):
-    def __init__(self, sample_rate=16000):
-        # https://github.com/Aria-K-Alethia/BigCodec/tree/main
-        # https://github.com/ollipauna/BigCodec
-        super(BigCodecAugmentation, self).__init__()
-        self.sample_rate = sample_rate
-
-        path = os.environ.get('BIG_CODEC_PATH', None)
-
-        if path is None:
-            raise RuntimeError("Environment variable BIG_CODEC_PATH is not set! "
-                               "Please set it to the path where the model config should be stored ")
-
-        ckpt = torch.load(path, map_location='cpu')
-        encoder = CodecEncoder()
-        encoder.load_state_dict(ckpt['CodecEnc'])
-        self.encoder = encoder.eval()
-        decoder = CodecDecoder()
-        decoder.load_state_dict(ckpt['generator'])
-        self.decoder = decoder.eval()
-
-        self.bc_sample_rate = 16000 
-
-        self.sample_rate = sample_rate
-        if self.sample_rate != self.bc_sample_rate:
-            self.resampler_to_bc = Resample(orig_freq=self.sample_rate, new_freq=self.bc_sample_rate)
-            self.resampler_from_bc = Resample(orig_freq=self.bc_sample_rate, new_freq=self.sample_rate)
-
-
-    def forward(self, x):
-
-        if x.ndim != 3:
-            raise ValueError(f"Expected input of shape (batch, channels=1, timestesps), got {x.shape}")
-        if x.size(1) != 1:
-            raise ValueError(f"Expected single channel input, got {x.shape}")
-
-        timesteps = x.size(-1)
-
-        if self.sample_rate != self.resampler_to_bc:
-            x = self.resampler_to_bc(x)
-        
-        x = torch.nn.functional.pad(x, (0, (200 - (x.shape[-1] % 200))))
-
-        vq_emb = self.encoder(x)
-        vq_post_emb, vq_code, _ = self.decoder(vq_emb, vq=True)
-        recon = self.decoder(vq_post_emb, vq=False)
-        
-        x = recon
-
-        if self.sample_rate != self.resampler_to_bc:
-            x = self.resampler_from_bc(x)
 
         # cut to the original length
         x = x[:, :, :timesteps]

@@ -97,7 +97,6 @@ class AugmentationContainerKeywords(AugmentationContainer):
             "codec_mimi_2.2kbs",
             "codec_mimi_4.4kbs",
             "codec_snac_0.98kbs",
-            "codec_big_codec_1.04kbs"
             "codec_pcm16"
             "nocodec",
         ]
@@ -340,10 +339,6 @@ class AugmentationContainerKeywords(AugmentationContainer):
             elif aug == 'codec_snac_0.98kbs':
                 augmentation_modules.append(
                     SnacAugmentation(sample_rate=sample_rate)
-                )
-            elif aug == 'codec_big_codec_1.04kbs':
-                augmentation_modules.append(
-                    BigCodecAugmentation(sample_rate=sample_rate)
                 )
             elif aug == "nocodec":
                 # for no codec, add a dummy module
