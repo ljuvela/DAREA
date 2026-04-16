@@ -4,7 +4,7 @@ channels:
   - pytorch
   - conda-forge
 dependencies:
-  - python=3.10
+  - python
   - pytorch
   - torchvision
   - torchaudio>2.3
@@ -21,4 +21,3 @@ dependencies:
     - descript-audio-codec
     - snac
     - beartype
-    

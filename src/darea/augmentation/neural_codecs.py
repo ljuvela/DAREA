@@ -12,10 +12,11 @@ from bigcodec.vq.codec_decoder import CodecDecoder
 
 class DacAugmentation(torch.nn.Module):
     def __init__(self, sample_rate=16000):
+        # https://github.com/descriptinc/descript-audio-codec
         super(DacAugmentation, self).__init__()
         self.sample_rate = sample_rate
 
-        self.dac_sample_rate = 24000
+        self.dac_sample_rate = 24_000
 
         model_path = dac.utils.download(model_type="24khz")
         if not os.path.isfile(model_path):
@@ -58,6 +59,9 @@ class DacAugmentation(torch.nn.Module):
 class EncodecAugmentation(torch.nn.Module):
     def __init__(self, sample_rate=16000, bandwidth=None):
          # bandwidths [1.5, 3, 6, 12, 24] uses largest by default
+         # https://github.com/facebookresearch/encodec
+         # https://github.com/ollipauna/encodec
+
         super(EncodecAugmentation, self).__init__()
         self.sample_rate = sample_rate
         self.bandwidth=bandwidth
@@ -104,14 +108,16 @@ class EncodecAugmentation(torch.nn.Module):
     
 
 class MimiAugmentation(torch.nn.Module):
-    # https://pypi.org/project/moshi/
+    # https://github.com/kyutai-labs/moshi
+    # https://github.com/ollipauna/moshi
+
     def __init__(self, sample_rate=16000, num_codebooks=8):
         super(MimiAugmentation, self).__init__()
         self.sample_rate = sample_rate
         
         mimi_weight = hf_hub_download(loaders.DEFAULT_REPO, loaders.MIMI_NAME)
         self.model = loaders.get_mimi(mimi_weight, num_codebooks=num_codebooks)
-        self.mimi_sample_rate = 24000
+        self.mimi_sample_rate = 24_000
 
         self.model.eval()
         self.model.requires_grad_(False)
@@ -151,7 +157,7 @@ class MimiAugmentation(torch.nn.Module):
 class SpeechTokenizerAugmentation(torch.nn.Module):
     def __init__(self, sample_rate=16000):
         # https://github.com/ZhangXInFD/SpeechTokenizer
-        # https://pypi.org/project/speechtokenizer/
+        # https://github.com/ollipauna/SpeechTokenizer
         super(SpeechTokenizerAugmentation, self).__init__()
         self.sample_rate = sample_rate
 
@@ -207,7 +213,7 @@ class SpeechTokenizerAugmentation(torch.nn.Module):
 
 class SnacAugmentation(torch.nn.Module):
     def __init__(self, sample_rate=16000):
-        # https://github.com/hubertsiuzdak/snac?tab=readme-ov-file
+        # https://github.com/hubertsiuzdak/snac
         super(SnacAugmentation, self).__init__()
         self.sample_rate = sample_rate
 

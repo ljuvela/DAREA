@@ -53,7 +53,7 @@ pytest tests/test_mit_rir_dataset.py
 
 DAC and SNAC can be installed directly from the official repositories. 
 
-https://github.com/descriptinc/descript-audio-codec/tree/main/dac
+https://github.com/descriptinc/descript-audio-codec
 https://github.com/hubertsiuzdak/snac
 
 However, for training time augmentation with other neural codecs you need to clone and install the following modified implementations. 

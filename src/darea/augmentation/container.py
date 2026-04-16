@@ -317,6 +317,7 @@ class AugmentationContainerKeywords(AugmentationContainer):
                     EncodecAugmentation(sample_rate=sample_rate, bandwidth=24)
                 )
             elif aug == "codec_speech_tokenizer_4kbps":
+                # bitrate = sampling_rate / prod(strides) * n_codebooks * log2(codebook_size)
                 augmentation_modules.append(
                     SpeechTokenizerAugmentation(sample_rate=sample_rate)
                 )
@@ -325,6 +326,8 @@ class AugmentationContainerKeywords(AugmentationContainer):
                     MimiAugmentation(sample_rate=sample_rate, num_codebooks=4)
                 )
             elif aug == "codec_mimi_1.1kbs":
+                # 12.5Hz * 8 * log2(2048) 
+                # https://arxiv.org/pdf/2410.00037
                 augmentation_modules.append(
                     MimiAugmentation(sample_rate=sample_rate, num_codebooks=8)
                 )
