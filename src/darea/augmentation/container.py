@@ -294,7 +294,11 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 )
             elif aug == "codec_dac_8kbps":
                 augmentation_modules.append(
-                    DacAugmentation(sample_rate=sample_rate)
+                    DacAugmentation(sample_rate=sample_rate, variable_bitrate=False)
+                )
+            elif aug == "codec_dac_variable_bitarate":
+                augmentation_modules.append(
+                    DacAugmentation(sample_rate=sample_rate, variable_bitrate=True)
                 )
             elif aug == "codec_encodec_1.5kbps":
                 augmentation_modules.append(

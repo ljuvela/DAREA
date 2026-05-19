@@ -9,7 +9,7 @@ from moshi.models import loaders
 from snac import SNAC
 
 class DacAugmentation(torch.nn.Module):
-    def __init__(self, sample_rate=16000):
+    def __init__(self, sample_rate=16000, variable_bitrate=False):
         # https://github.com/descriptinc/descript-audio-codec
         super(DacAugmentation, self).__init__()
         self.sample_rate = sample_rate
@@ -21,7 +21,11 @@ class DacAugmentation(torch.nn.Module):
             print(f"Downloading model to {model_path}")
         self.model = dac.DAC.load(model_path)
 
-        self.model.eval()
+        if variable_bitrate:
+            self.model.train()
+        else:
+            self.model.eval()
+
         self.model.requires_grad_(False)
 
         self.sample_rate = sample_rate
