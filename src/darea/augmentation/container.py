@@ -296,7 +296,7 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 augmentation_modules.append(
                     DacAugmentation(sample_rate=sample_rate, variable_bitrate=False)
                 )
-            elif aug == "codec_dac_variable_bitarate":
+            elif aug == "codec_dac_variable_bitrate":
                 augmentation_modules.append(
                     DacAugmentation(sample_rate=sample_rate, variable_bitrate=True)
                 )
