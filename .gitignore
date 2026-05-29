@@ -81,3 +81,5 @@ ipython_config.py
 # Data directory
 data/*
 
+# VSCode settings
+.vscode/settings.json

@@ -288,7 +288,10 @@ class AugmentationContainerKeywords(AugmentationContainer):
             elif aug == "nocodec":
                 # for no codec, add a dummy module
                 augmentation_modules.append(DummyAugmentation())
-
+            elif aug == "codec_pcm16nocodec":
+                # 16 bit PCM signed integer 
+                bitrate = 16 * sample_rate
+                augmentation_modules.append(CodecAugmentation(format="pcm16", sample_rate=sample_rate, bitrate=bitrate, grad_clip_norm_level=grad_clip_norm_level))
             else:
                 raise ValueError(f"Unknown augmentation '{aug}'")
 
