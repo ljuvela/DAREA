@@ -75,3 +75,9 @@ db.sqlite3-journal
 profile_default/
 ipython_config.py
 
+# MacOS
+*.DS_Store
+
+# Data directory
+data/*
+
