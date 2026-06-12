@@ -36,6 +36,7 @@ class NoiseAugmentation(torch.nn.Module):
             num_workers=num_workers,
             drop_last=True, shuffle=True)
         
+        self.noise_iter = self._noise_generator()
 
     def _noise_generator(self):
         """
@@ -63,11 +64,13 @@ class NoiseAugmentation(torch.nn.Module):
             raise ValueError(f"Expected waveform to have 3 dimensions (batch, channels, time). Got {waveform.dim()}")
         batch_size, channels, timesteps = waveform.size()
 
-        noise = next(self._noise_generator())
+        noise = next(self.noise_iter)
         noise = noise.to(waveform.device)
-        noise = torch.nn.functional.pad(
-            noise, pad=(waveform.size(-1)-noise.size(-1), 0),
-            mode='constant', value=0.0).to(waveform.device)
+
+        n_repeats = timesteps // noise.size(-1) + 1
+
+        noise = noise.repeat(1, 1, n_repeats)
+        noise = noise[...,:timesteps]
 
         # sample snr from uniform distribution
         snr = torch.empty(batch_size, channels).uniform_(

@@ -10,9 +10,11 @@ dependencies:
   - torchaudio>2.3
   - pytorch
   - git-lfs
+  - transformers
   - torchaudio
   - pysoundfile
   - pytest 
   - numpy
   - ffmpeg<7
   - speex
+

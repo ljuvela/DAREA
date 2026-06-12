@@ -2,7 +2,7 @@ import torch
 
 from .noise import NoiseAugmentation
 from .codecs import CodecAugmentation
-from .neural_codecs import NeuralCodecAugmentation
+from .neural_codecs import *
 from .room_impulse import ConvolutionReverbAugment
 from .filters import LowPassFilterAugmentation, HighPassFilterAugmentation
 from .dropout import SampleDropoutAugmentation, StftDropoutAugmentation
@@ -86,6 +86,17 @@ class AugmentationContainerKeywords(AugmentationContainer):
             "codec_g722_64kbps",
             "codec_g723_1",
             "codec_dac_8kbps",
+            "codec_encodec_1.5kbps",
+            "codec_encodec_3kbps",
+            "codec_encodec_6kbps",
+            "codec_encodec_12kbps",
+            "codec_encodec_24kbps",
+            "codec_speech_tokenizer_4kbps",
+            "codec_mimi_0.55kbs",
+            "codec_mimi_1.1kbs",
+            "codec_mimi_2.2kbs",
+            "codec_mimi_4.4kbs",
+            "codec_snac_0.98kbs",
             "codec_pcm16"
             "nocodec",
         ]
@@ -283,7 +294,58 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 )
             elif aug == "codec_dac_8kbps":
                 augmentation_modules.append(
-                    NeuralCodecAugmentation(sample_rate=sample_rate)
+                    DacAugmentation(sample_rate=sample_rate, variable_bitrate=False)
+                )
+            elif aug == "codec_dac_variable_bitrate":
+                augmentation_modules.append(
+                    DacAugmentation(sample_rate=sample_rate, variable_bitrate=True)
+                )
+            elif aug == "codec_encodec_1.5kbps":
+                augmentation_modules.append(
+                    EncodecAugmentation(sample_rate=sample_rate, bandwidth=1.5)
+                )
+            elif aug == "codec_encodec_3kbps":
+                augmentation_modules.append(
+                    EncodecAugmentation(sample_rate=sample_rate, bandwidth=3)
+                )
+            elif aug == "codec_encodec_6kbps":
+                augmentation_modules.append(
+                    EncodecAugmentation(sample_rate=sample_rate, bandwidth=6)
+                )
+            elif aug == "codec_encodec_12kbps":
+                augmentation_modules.append(
+                    EncodecAugmentation(sample_rate=sample_rate, bandwidth=12)
+                )
+            elif aug == "codec_encodec_24kbps":
+                augmentation_modules.append(
+                    EncodecAugmentation(sample_rate=sample_rate, bandwidth=24)
+                )
+            elif aug == "codec_speech_tokenizer_4kbps":
+                # bitrate = sampling_rate / prod(strides) * n_codebooks * log2(codebook_size)
+                augmentation_modules.append(
+                    SpeechTokenizerAugmentation(sample_rate=sample_rate)
+                )
+            elif aug == "codec_mimi_0.55kbs":
+                augmentation_modules.append(
+                    MimiAugmentation(sample_rate=sample_rate, num_codebooks=4)
+                )
+            elif aug == "codec_mimi_1.1kbs":
+                # 12.5Hz * 8 * log2(2048) 
+                # https://arxiv.org/pdf/2410.00037
+                augmentation_modules.append(
+                    MimiAugmentation(sample_rate=sample_rate, num_codebooks=8)
+                )
+            elif aug == "codec_mimi_2.2kbs":
+                augmentation_modules.append(
+                    MimiAugmentation(sample_rate=sample_rate, num_codebooks=16)
+                )
+            elif aug == "codec_mimi_4.4kbs":
+                augmentation_modules.append(
+                    MimiAugmentation(sample_rate=sample_rate, num_codebooks=32)
+                )
+            elif aug == 'codec_snac_0.98kbs':
+                augmentation_modules.append(
+                    SnacAugmentation(sample_rate=sample_rate)
                 )
             elif aug == "nocodec":
                 # for no codec, add a dummy module
