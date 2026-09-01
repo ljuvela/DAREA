@@ -389,3 +389,34 @@ class AugmentationContainerAllDarea(AugmentationContainerKeywords):
 
     def forward(self, x):
         return super().forward(x)
+
+
+class AugmentationContainerNeuralCodecs(AugmentationContainerKeywords):
+
+    def __init__(
+        self,
+        sample_rate,
+        segment_size,
+        num_workers=0,
+        partition="train",
+        resample=True,
+        shuffle=True,
+        batch_size=1,
+        num_random_choose=1,
+    ):
+
+        self.aug_names = ['codec_dac_8kbps', 'codec_encodec_6kbps', 'codec_encodec_12kbps', 'codec_speech_tokenizer_4kbps', 'codec_mimi_1.1kbs', 'codec_snac_0.98kbs']
+        super().__init__(
+            augmentations=self.aug_names,
+            sample_rate=sample_rate,
+            segment_size=segment_size,
+            num_workers=num_workers,
+            partition=partition,
+            resample=resample,
+            shuffle=shuffle,
+            batch_size=batch_size,
+            num_random_choose=num_random_choose
+        )
+
+    def forward(self, x):
+        return super().forward(x)
