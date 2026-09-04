@@ -86,18 +86,19 @@ class AugmentationContainerKeywords(AugmentationContainer):
             "codec_g722_64kbps",
             "codec_g723_1",
             "codec_dac_8kbps",
+            "codec_dac_variable_bitrate",
             "codec_encodec_1.5kbps",
             "codec_encodec_3kbps",
             "codec_encodec_6kbps",
             "codec_encodec_12kbps",
             "codec_encodec_24kbps",
             "codec_speech_tokenizer_4kbps",
-            "codec_mimi_0.55kbs",
-            "codec_mimi_1.1kbs",
-            "codec_mimi_2.2kbs",
-            "codec_mimi_4.4kbs",
-            "codec_snac_0.98kbs",
-            "codec_pcm16"
+            "codec_mimi_0.55kbps",
+            "codec_mimi_1.1kbps",
+            "codec_mimi_2.2kbps",
+            "codec_mimi_4.4kbps",
+            "codec_snac_0.98kbps",
+            "codec_pcm16",
             "nocodec",
         ]
 
@@ -325,25 +326,25 @@ class AugmentationContainerKeywords(AugmentationContainer):
                 augmentation_modules.append(
                     SpeechTokenizerAugmentation(sample_rate=sample_rate)
                 )
-            elif aug == "codec_mimi_0.55kbs":
+            elif aug == "codec_mimi_0.55kbps":
                 augmentation_modules.append(
                     MimiAugmentation(sample_rate=sample_rate, num_codebooks=4)
                 )
-            elif aug == "codec_mimi_1.1kbs":
+            elif aug == "codec_mimi_1.1kbps":
                 # 12.5Hz * 8 * log2(2048) 
                 # https://arxiv.org/pdf/2410.00037
                 augmentation_modules.append(
                     MimiAugmentation(sample_rate=sample_rate, num_codebooks=8)
                 )
-            elif aug == "codec_mimi_2.2kbs":
+            elif aug == "codec_mimi_2.2kbps":
                 augmentation_modules.append(
                     MimiAugmentation(sample_rate=sample_rate, num_codebooks=16)
                 )
-            elif aug == "codec_mimi_4.4kbs":
+            elif aug == "codec_mimi_4.4kbps":
                 augmentation_modules.append(
                     MimiAugmentation(sample_rate=sample_rate, num_codebooks=32)
                 )
-            elif aug == 'codec_snac_0.98kbs':
+            elif aug == 'codec_snac_0.98kbps':
                 augmentation_modules.append(
                     SnacAugmentation(sample_rate=sample_rate)
                 )
@@ -405,7 +406,7 @@ class AugmentationContainerNeuralCodecs(AugmentationContainerKeywords):
         num_random_choose=1,
     ):
 
-        self.aug_names = ['codec_dac_8kbps', 'codec_encodec_6kbps', 'codec_encodec_12kbps', 'codec_speech_tokenizer_4kbps', 'codec_mimi_1.1kbs', 'codec_snac_0.98kbs']
+        self.aug_names = ['codec_dac_8kbps', 'codec_encodec_6kbps', 'codec_encodec_12kbps', 'codec_speech_tokenizer_4kbps', 'codec_mimi_1.1kbps', 'codec_snac_0.98kbps']
         super().__init__(
             augmentations=self.aug_names,
             sample_rate=sample_rate,
