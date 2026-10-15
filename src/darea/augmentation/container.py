@@ -3,6 +3,7 @@ import torch
 from .noise import NoiseAugmentation
 from .codecs import CodecAugmentation
 from .neural_codecs import *
+from .denoisers import DenoisingAugmentation
 from .room_impulse import ConvolutionReverbAugment
 from .filters import LowPassFilterAugmentation, HighPassFilterAugmentation
 from .dropout import SampleDropoutAugmentation, StftDropoutAugmentation
@@ -98,6 +99,7 @@ class AugmentationContainerKeywords(AugmentationContainer):
             "codec_mimi_2.2kbps",
             "codec_mimi_4.4kbps",
             "codec_snac_0.98kbps",
+            "denoising"
             "codec_pcm16",
             "nocodec",
         ]
@@ -347,6 +349,10 @@ class AugmentationContainerKeywords(AugmentationContainer):
             elif aug == 'codec_snac_0.98kbps':
                 augmentation_modules.append(
                     SnacAugmentation(sample_rate=sample_rate)
+                )
+            elif aug == 'denoising':
+                augmentation_modules.append(
+                    DenoisingAugmentation(sample_rate=sample_rate)
                 )
             elif aug == "nocodec":
                 # for no codec, add a dummy module
