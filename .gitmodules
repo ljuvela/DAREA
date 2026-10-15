@@ -1,0 +1,3 @@
+[submodule "src/darea/third_party/CleanUNet"]
+	path = src/darea/third_party/CleanUNet
+	url = git@github.com:ollipauna/CleanUNet.git
